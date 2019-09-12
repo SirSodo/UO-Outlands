@@ -1,0 +1,65 @@
+///////////////////////////////////
+// Sir Sodomizer's 50-120 Cartog //
+//  It crafts, trashs and pulls  //
+// Needs stash/trash in 2 tiles  //
+//  Put pens and maps in stash   //
+///////////////////////////////////
+if not distance 'trash' < 3
+  headmsg "Target Trash Can" 38
+  promptalias 'trash'
+endif
+if not @distance stash < 3
+  headmsg "Select blanks and pens stash" 38
+  promptalias stash
+endif
+useobject trash
+pause 650
+while skill Cartography < 120
+  // if no blank maps left
+  if @counttype 0x14ec 2955 backpack < 1
+    // Try to move 30 maps
+    if @movetype 0x14ec stash backpack 0 0 0 2955 30
+      pause 1000
+    else
+      headmsg "No blank maps left" 38
+      stop
+    endif
+  endif
+  // If no mapmaker's pens in pack move 1
+  if not @findtype 0xfbf 2575 backpack
+    if @movetype 0xfbf stash backpack 0 0 0 2575
+      pause 1000
+    else
+      headmsg "No mapmaker's pens left in stash" 38
+      stop
+    endif
+  endif
+  // Use mapmakers pen
+  @usetype 0xfbf 2575 backpack
+  waitforgump 0x38920abd 5000
+  // Selet Maps
+  replygump 0x38920abd 100
+  waitforgump 0x38920abd 5000
+  if skill cartography < 75
+    replygump 0x38920abd 201
+  elseif skill cartography < 100
+    replygump 0x38920abd 202
+  elseif skill cartography < 120
+    replygump 0x38920abd 203
+  endif
+  pause 900
+  @movetype 0x14ec backpack trash 0 0 0 2669
+  pause 1000
+  //while counttype 0x14ec 2669 trash > 120
+  while contents trash == 125
+    headmsg "Pausing for trash to empty" 38
+    pause 15000
+  endwhile
+  if @injournal "container cannot hold more" system
+    headmsg "Trash full, pausing for 90 seconds" 38
+    @clearjournal
+    pause 90000
+  endif
+endwhile
+headmsg "Congrats on hitting 120!" 38
+

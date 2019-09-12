@@ -1,0 +1,114 @@
+///////////////////////////////////
+// Sir Sodomizer's 50-120 Tailor //
+// It crafts, recycles and pulls //
+// Put kits and leather in stash //
+///////////////////////////////////
+if not @distance stash < 3
+  headmsg "Select leather and sewing kits stash" 38
+  promptalias stash
+endif
+@createlist recycle
+@clearlist recycle
+@pushlist recycle 0x13c7 // Leather Gorgets
+@pushlist recycle 0x13ce // Leather Gloves
+@pushlist recycle 0x1dba // Leather Caps
+@pushlist recycle 0x13d6 // Studded Gorgets
+@pushlist recycle 0x13dd // Studded Gloves
+@pushlist recycle 0x1dba // Studded Caps
+@pushlist recycle 0x13d4 // Studded Arms
+@pushlist recycle 0x13e1 // Studded Legs
+@pushlist recycle 0x1eba // Repair Kits
+// While below skill level 120
+while skill tailoring < 120
+  // If fewer than 14 leather in pack move 200
+  if @counttype 0x1081 any backpack < 14
+    if @movetype 0x1081 stash backpack 0 0 0 0 200
+      pause 1000
+    else
+      headmsg "No leather left in stash" 38
+      stop
+    endif
+  endif
+  // If no sewing kits in pack move 1
+  if not @findtype 0xf9d any backpack
+    if @movetype 0xf9d stash backpack
+      pause 1000
+    else
+      headmsg "No sewing kits left in stash" 38
+      stop
+    endif
+  endif
+  // Use sewing kit
+  @usetype 0xf9d any backpack
+  waitforgump 0x38920abd 5000
+  // Checks if Recycle all is on
+  while not @ingump 0x38920abd "Recycle All (of Type)"
+    // Hits recycle button until recycle all shows up
+    replygump 0x38920abd 2
+    waitforgump 0x38920abd 5000
+    pause 500
+  endwhile
+  for 0 to recycle
+    // Count number of items to recycle
+    if @counttype 'recycle[]' any backpack > 4
+      // Find specific item to recycle
+      @findtype 'recycle[]' any backpack
+      // Hit recycle button
+      replygump 0x38920abd 3
+      waitfortarget 5000
+      target! found
+      // Use sewing kit
+      @usetype 0xf9d any backpack
+      waitforgump 0x38920abd 5000
+    endif
+  endfor
+  if skill Tailoring < 65
+    // Make leather gorgets
+    replygump 0x38920abd 101
+    waitforgump 0x38920abd 5000
+    replygump 0x38920abd 200
+  elseif skill Tailoring < 70
+    // Make leather gloves
+    replygump 0x38920abd 101
+    waitforgump 0x38920abd 5000
+    replygump 0x38920abd 201
+  elseif skill Tailoring < 75
+    // Make leather caps
+    replygump 0x38920abd 101
+    waitforgump 0x38920abd 5000
+    replygump 0x38920abd 202
+  elseif skill Tailoring < 85
+    // Make studded gorgets
+    replygump 0x38920abd 102
+    waitforgump 0x38920abd 5000
+    replygump 0x38920abd 200
+  elseif skill Tailoring < 90
+    // Make studded gloves
+    replygump 0x38920abd 102
+    waitforgump 0x38920abd 5000
+    replygump 0x38920abd 201
+  elseif skill Tailoring < 95
+    // Make studded cap
+    replygump 0x38920abd 102
+    waitforgump 0x38920abd 5000
+    replygump 0x38920abd 202
+  elseif skill Tailoring < 100
+    // Make studded arms
+    replygump 0x38920abd 102
+    waitforgump 0x38920abd 5000
+    replygump 0x38920abd 203
+  elseif skill Tailoring < 105
+    // Make studded legs
+    replygump 0x38920abd 102
+    waitforgump 0x38920abd 5000
+    replygump 0x38920abd 204
+  elseif skill Tailoring < 120
+    // Make repair kits
+    replygump 0x38920abd 108
+    waitforgump 0x38920abd 5000
+    replygump 0x38920abd 200
+  endif
+  pause 1900
+endwhile
+headmsg "Congrats on hitting 120!" 38
+

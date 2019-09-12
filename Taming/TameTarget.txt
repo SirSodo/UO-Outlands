@@ -1,0 +1,36 @@
+///////////////////////////////
+// Sir Sodomizer's Tamer 1.0 //
+//  Hit play and Target mob  //
+//  Macro stops when tamed   //
+///////////////////////////////
+headmsg 'Select beast to tame'
+promptalias 'TameMe'
+removetimer "Taming"
+if not @findobject 'TameMe'
+  headmsg "No creature targetted, stopping" 38
+  stop
+endif
+while @inrange 'TameMe' 10
+  if friend 'TameMe'
+    headmsg "Tamed Successfully" 38
+    @unsetalias 'TameMe'
+    stop
+  endif
+  if not @timerexists "Taming"
+    useskill 'Animal Taming'
+    waitfortarget 5000
+    target! 'TameMe'
+    @clearjournal
+    createtimer "Taming"
+    warmode on
+    warmode off
+  endif
+  // If you're been taming 10+ seconds
+  if @timer "Taming" > 10000
+    // Wait 3.3s to see if you've failed
+    waitforjournal "fail to tame" 3300
+    removetimer "Taming"
+  endif
+endwhile
+headmsg "Creature too far to tame" 38
+

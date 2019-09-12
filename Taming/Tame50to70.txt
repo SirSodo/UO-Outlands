@@ -1,0 +1,105 @@
+////////////////////////////////////////
+// Sir Sodomizer's 50-70 Taming V 1.1 //
+// No tank pets needed. Go to Shelter //
+//  Stand in middle of the frog room  //
+//  If you have healing it heals you  //
+// Tame, rename, release, and ignores //
+////////////////////////////////////////
+@createlist 'Tamables'
+@clearlist 'Tamables'
+@pushlist 'Tamables' 0x51 // Giant Frog
+@pushlist 'Tamables' 0x50 // Colossal Frog
+// Bandage check!
+if counttype '0xe21' 'any' 'backpack' < 1
+  headmsg "No bandages!" 38
+  stop
+endif
+removetimer "Taming"
+@clearjournal
+/////////////////////
+while skill "Animal Taming" < 70
+  // If tamed renames, attacks, releases, and ignores
+  if friend 'TameMe'
+    headmsg "Tamed Successfully" 38
+    rename 'TameMe' Tamed
+    // Releases tamed animal via context
+    if skill herding == 0
+      // Option 10 is 9th, Release
+      waitforcontext 'TameMe' 9 15000
+    else
+      // Changes to 10th since we have herding
+      waitforcontext 'TameMe' 10 15000
+    endif
+    // Clicks accept gump
+    waitforgump 0x909cc741 15000
+    replygump 0x909cc741 1
+    ignoreobject 'TameMe'
+    @unsetalias 'TameMe'
+  endif
+  // If not bandaging
+  if not @timerexists "Bandage"
+    // If you are hurt and have over 29 healing
+    if diffhits > 0 and skill healing > 29
+      warmode on
+      warmode off
+      headmsg "Warning, you are being attacked" 38
+      createtimer "Bandage"
+      @clearjournal
+      bandage self
+    endif
+    // If you are bandaging
+  else
+    // Scans system to see if you've finished
+    if @injournal 'finish applying' 'system' or @injournal "not damaged" 'system'
+      // Low bandage warning
+      if @counttype '0xe21' 'any' 'backpack' < 20
+        headmsg "Low bandages!" 38
+      endif
+      @removetimer "Bandage"
+      pause 150
+    elseif @injournal "little damage" 'system' or @timer "Bandage" > 20000
+      @removetimer "Bandage"
+      pause 150
+    endif
+  endif
+  // If it doesn't find the animal you're taming
+  if not @inrange 'TameMe' 10
+    // Find a pet on your tamables list
+    for 0 to 'Tamables'
+      // Once it has found one
+      if @findtype 'Tamables[]' any ground any 10
+        @setalias 'TameMe' found
+        // If it's friendly or blue ignore it
+        if friend 'TameMe' or innocent 'TameMe'
+          ignoreobject 'TameMe'
+          @unsetalias 'TameMe'
+        endif
+        break
+      endif
+    endfor
+    // If it does find them
+  else
+    // If not taming
+    if not @timerexists "Taming"
+      useskill 'Animal Taming'
+      waitfortarget 5000
+      target! 'TameMe'
+      @clearjournal
+      createtimer "Taming"
+      warmode on
+      warmode off
+    endif
+  endif
+  // If you're been taming 10+ seconds
+  if @timer "Taming" > 10000
+    // Wait 3.3s to see if you've failed
+    waitforjournal "fail to tame" 3300
+    removetimer "Taming"
+  endif
+  // Stops taming Giant Frogs at 65
+  if skill "Animal Taming" > 64.9
+    @poplist Tamables 0x51
+  endif
+endwhile
+headmsg "Congrats on hitting 70!" 38
+

@@ -1,0 +1,74 @@
+/////////////////////////////////////
+// Sir Sodomizer's Overworld Macro //
+// Skins, Shears, and Makes Cloth  //
+/////////////////////////////////////
+// While unshorn Sheep within 2 tiles
+while @findtype '0xcf' 'any' 'ground' '1' '2'
+  // Try to use scissors
+  if @usetype '0xf9f' 'any' 'backpack'
+    waitfortarget '5000'
+    target! 'found'
+    pause 750
+  else
+    // No scissors = leave loop
+    break
+  endif
+  // Waits for macrocheck to be finished
+  while @ingump any "Captcha"
+    pause 250
+  endwhile
+endwhile
+// If have skinning knife and corpse on ground
+if @findtype 0x2d20 'any' backpack and @findtype '0x2006' 'any' 'ground' '1' '2'
+  useskill 'Forensic Evaluation'
+  waitfortarget 5000
+  target! 'self'
+  while @ingump any "Captcha"
+    pause 250
+  endwhile
+endif
+// Loops while there is wool in your backpack
+while @findtype 0xdf8 any backpack
+  @setalias 'wool' 'found'
+  // Look for a spinning wheel
+  if @findtype 0x1015 any ground 1 2
+    useobject 'wool'
+    waitfortarget 5000
+    target! 'found'
+    pause 4500
+  else
+    // No spinning wheel = leave loop
+    break
+  endif
+endwhile
+// Searches for yarn in your backpcak
+if @findtype 0xe1d any backpack
+  @setalias 'yarn' 'found'
+  // Stops at 4 so you don't waste yarn
+  while @counttype 0xe1d any backpack > 4
+    // Searches for first style of loom
+    if @findtype 0x1062 any ground 1 2 or @findtype 0x1061 any ground 1 2
+      useobject 'yarn'
+      waitfortarget 5000
+      target! 'found'
+      // Searches for second style of loom
+    elseif @findtype 0x105f any ground 1 2 or @findtype 0x1060 any ground 1 2
+      useobject 'yarn'
+      waitfortarget 5000
+      target! 'found'
+    else
+      // No loom = leave loop
+      break
+    endif
+    pause 650
+  endwhile
+endif
+if @findtype 0xf95 any backpack
+  // Try to use scissors
+  if @usetype '0xf9f' 'any' 'backpack'
+    waitfortarget '5000'
+    target! 'found'
+    pause 750
+  endif
+endif
+

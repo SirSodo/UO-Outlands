@@ -1,0 +1,33 @@
+//////////////////////////////////
+//  Sir Sodomizer's Gate Macro  //
+// Edit line 20 for destination //
+//////////////////////////////////
+// Searches for a gate
+if @findtype 0xf6c 'any' 'ground'
+  // Makes sure gate is less than 3 tiles away
+  if @distance found < 3
+    // Uses the gate
+    useobject 'found'
+    // If the gate is 'blue' color 0 (Player casted gates)
+    if @findobject found 0
+      waitforgump 0xe866525f 5000
+      // Accepts prompt
+      replygump 0xe866525f 2
+      // Otherwise if it's a colored gate
+    else
+      waitforgump 0xe0e675b8 5000
+      // Selects The Arena
+      replygump 0xe0e675b8 18
+      waitforgump 0xe0e675b8 5000
+      // Selects travel
+      replygump 0xe0e675b8 2
+    endif
+    // Otherwise if it found a gate but it's too far
+  else
+    headmsg "Gate Too Far" 38
+  endif
+  // Macro did not find a gate
+else
+  headmsg 'No Gate Found' 38
+endif
+

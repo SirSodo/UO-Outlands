@@ -1,0 +1,94 @@
+/////////////////////////////////////////
+// Sir Sodomizer's Make Last EXP V 1.0 //
+// Makes last item & RECYCLES REGULARS //
+// If you select SHELF it will restock //
+//   Put tools and resources in pack   //
+//  Edit macro and make the item once  //
+// Use Object Inspector to get Graphic //
+// You can add multiple item if needed //
+/////////////////////////////////////////
+@createlist tool
+@clearlist tool
+@createlist resource
+@clearlist resource
+@createlist item
+@clearlist item
+@clearjournal
+// EDIT 3 LINES BELOW
+@pushlist 'tool' 0xf9d // Graphic of tool goes here
+@pushlist 'resource' 0x1081 // Graphic of resource goes here
+@pushlist 'item' 0x13d3 // Graphic of item being recycled
+// EDIT 3 LINES ABOVE, DON'T TOUCH BELOW
+// Checks to see if you've opted into using a shelf
+// Searches if your shelf is within 2 tiles
+if not @distance 'shelf' < 3
+  // If not found, or too far, it asks for the shelf
+  headmsg "Select shelf you wish to restock, or hit Escape" 38
+  promptalias 'shelf'
+endif
+for 0 to 'tool'
+  // Will run until you are out of tools
+  while counttype 'tool[]' any backpack > 0
+    // Searches for society, stops if completed
+    if @injournal "completed a society job" system
+      headmsg "Society job complete, stopping" 38
+      @clearjournal
+      stop
+    endif
+    for 0 to 'resource'
+      // Counts resources, currently set to stop if below 16
+      if @counttype 'resource[]' any backpack < 16
+        // Stops if you are below 16 resources
+        headmsg "More Resources Needed" 38
+        stop
+      endif
+    endfor
+    for 0 to tool
+      // Uses tool
+      @usetype 'tool[]' any backpack
+      // Waits for crafting gump to open
+      waitforgump 0x38920abd 5000
+      // Checks if Recycle all is on
+      while not @ingump 0x38920abd "Recycle Regular (of Type)"
+        // Hits recycle button until recycle all shows up
+        replygump 0x38920abd 2
+        waitforgump 0x38920abd 5000
+        pause 500
+      endwhile
+      for 0 to 'item'
+        // Counts if more than 5 recyclable items
+        if @counttype 'item[]' any backpack > 5
+          // Searches for item to target
+          @findtype 'item[]' any backpack
+          // Hits "Begin Recycling"
+          replygump 0x38920abd 3
+          waitfortarget 5000
+          // Targets an item
+          target! found
+          pause 650
+        else
+          // Hits "Make Last Item"
+          replygump 0x38920abd 7
+          // Waits half a second
+          pause 500
+          // Checks if the shelf you've selected is within 2 tiles
+          if @distance 'shelf' < 3
+            // Checks to see if Shelf gump is open
+            if not @gumpexists 0xc0b1026d
+              // If gump isn't open it uses the shelf
+              useobject 'shelf'
+              waitforgump 0xc0b1026d 5000
+            endif
+            // Hits Restock from target
+            replygump 0xc0b1026d 2
+            waitfortarget 5000
+            target! backpack
+          endif
+          // Waits 1.4 seconds, edit for lag
+          pause 1400
+        endif
+      endfor
+    endfor
+  endwhile
+endfor
+

@@ -1,0 +1,92 @@
+///////////////////////////////////
+// Sir Sodomizer's 50-120 Tinker //
+// It crafts, recycles and pulls //
+// Put tools and ingots in stash //
+///////////////////////////////////
+if not @distance stash < 3
+  headmsg "Select ingots and tinker tools stash" 38
+  promptalias stash
+endif
+@createlist recycle
+@clearlist recycle
+@pushlist recycle 0xa22 // Lanterns
+@pushlist recycle 0x14fd // Lock Picks
+@pushlist recycle 0x1011 // Key Rings
+@pushlist recycle 0xa27 // Candleabras
+// While below skill level 120
+while skill tinkering < 120
+  // If fewer than 5 ingots in pack move 200
+  if @counttype 0x1bf2 any backpack < 5
+    if @movetype 0x1bf2 stash backpack 0 0 0 0 200
+      pause 1000
+    else
+      headmsg "No ingots left in stash" 38
+      stop
+    endif
+  endif
+  // If no tinker tools in pack move 1
+  if not @findtype 0x1eb8 any backpack
+    if @movetype 0x1eb8 stash backpack
+      pause 1000
+    else
+      headmsg "No tinker tools left in stash" 38
+      stop
+    endif
+  endif
+  // Use tinker tools
+  @usetype 0x1eb8 any backpack
+  waitforgump 0x38920abd 5000
+  // Checks if Recycle all is on
+  while not @ingump 0x38920abd "Recycle All (of Type)"
+    // Hits recycle button until recycle all shows up
+    replygump 0x38920abd 2
+    waitforgump 0x38920abd 5000
+    pause 500
+  endwhile
+  for 0 to recycle
+    // Count number of items to recycle
+    if @counttype 'recycle[]' any backpack > 4
+      // Find specific item to recycle
+      @findtype 'recycle[]' any backpack
+      // Hit recycle button
+      replygump 0x38920abd 3
+      waitfortarget 5000
+      target! found
+      // Use tinker tools
+      @usetype 0x1eb8 any backpack
+      waitforgump 0x38920abd 5000
+    endif
+  endfor
+  if skill Tinkering < 75
+    // Make Lanterns
+    replygump 0x38920abd 9
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 103
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 11
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 200
+  elseif skill Tinkering < 80
+    // Make iron lockpicks
+    replygump 0x38920abd 102
+    waitforgump 0x38920abd 5000
+    replygump 0x38920abd 200
+  elseif skill Tinkering < 100
+    // Make key rings
+    replygump 0x38920abd 109
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 207
+  elseif skill Tinkering < 120
+    // Make Candleabras
+    replygump 0x38920abd 9
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 103
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 11
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 202
+  endif
+  pause 1900
+endwhile
+headmsg "Congrats on hitting 120!" 38
+

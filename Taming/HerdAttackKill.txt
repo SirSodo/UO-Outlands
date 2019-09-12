@@ -1,0 +1,27 @@
+//////////////////////////////////////
+// Sir Sodomizer's Herd/Attack/Kill //
+// Will ask for a target, then all  //
+//  kill, then attack, then herd.   //
+// Edit bottm line to start AutoVet //
+//////////////////////////////////////
+headmsg "Target what you want to die" 38
+promptalias killkillkill
+pause 250
+if not @findobject killkillkill
+  headmsg "No target aquired, stopping" 38
+  stop
+endif
+msg "all kill"
+waitfortarget 5000
+target! killkillkill
+pause 250
+attack killkillkill
+// If it's able to use a crook in your backpack
+if usetype '0xe81' any backpack
+  waitfortarget 5000
+  target! killkillkill
+endif
+@unsetalias killkillkill
+// Next line automatically plays the macro AutoVet, edit out // if you want this to happen
+//playmacro AutoVet
+

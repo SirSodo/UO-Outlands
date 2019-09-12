@@ -1,0 +1,221 @@
+///////////////////////////////////
+// Sir Sodomizer's Item ID V 1.0 //
+// Select From, Sell, & Keep bag //
+//  120 Item ID does entire bag  //
+//  Lower does 1 item at a time  //
+// Credit to prior authors below //
+// Salient, Experience, & Burger //
+///////////////////////////////////
+@createlist 'ItemQuality'
+@clearlist 'ItemQuality'
+@createlist 'ItemTypes'
+@clearlist 'ItemTypes'
+/////// Item Quality below \\\\\\\
+// Accuracy Level
+@pushlist 'ItemQuality' 'Eminently'
+@pushlist 'ItemQuality' 'Exceedingly'
+@pushlist 'ItemQuality' 'Supremely'
+// Damage Level
+@pushlist 'ItemQuality' 'Force'
+@pushlist 'ItemQuality' 'Power'
+@pushlist 'ItemQuality' 'Vanquishing'
+// Protection Level
+@pushlist 'ItemQuality' 'Hardening'
+@pushlist 'ItemQuality' 'Fortification'
+@pushlist 'ItemQuality' 'Invulnerability'
+// Durability Level
+@pushlist 'ItemQuality' 'Massive'
+@pushlist 'ItemQuality' 'Fortified'
+@pushlist 'ItemQuality' 'Indestructable'
+// Misc Levels
+@pushlist 'ItemQuality' 'Slaying'
+@pushlist 'ItemQuality' 'Enticement'
+/////// Item Quality Above \\\\\\\
+///////  Item Type Below   \\\\\\\
+//Shields
+@pushlist 'ItemTypes' 0x1b72 //BronzeShields
+@pushlist 'ItemTypes' 0x1b73 //Buckler
+@pushlist 'ItemTypes' 0x1b7b //MetalShield
+@pushlist 'ItemTypes' 0x1b75 //Metal Kite Shield
+@pushlist 'ItemTypes' 0x1b79 //Tear Kite Shield
+@pushlist 'ItemTypes' 0x1b7a //WoodenShield
+@pushlist 'ItemTypes' 0x1b77 //HeaterShield
+//Platemail
+@pushlist 'ItemTypes' 0x1408 //Close Helmet
+@pushlist 'ItemTypes' 0x1409 //Close Helmet
+@pushlist 'ItemTypes' 0x1417 //Platemail Arms
+@pushlist 'ItemTypes' 0x141a //Platemail Legs
+@pushlist 'ItemTypes' 0x1412 //Plate Helm
+@pushlist 'ItemTypes' 0x1413 //Plate Gorget
+@pushlist 'ItemTypes' 0x1418 //Platemail Gloves
+@pushlist 'ItemTypes' 0x1415 //all offset by one - check all plate
+@pushlist 'ItemTypes' 0x1416 //Plate Chest - uoo
+@pushlist 'ItemTypes' 0x140a //Helmet
+@pushlist 'ItemTypes' 0x140c //Bascinet - uoo
+@pushlist 'ItemTypes' 0x140f //Norse Helm
+//Bone
+@pushlist 'ItemTypes' 0x1454 //Bone Chest
+@pushlist 'ItemTypes' 0x1453 //Bone Arms
+@pushlist 'ItemTypes' 0x1457 //Bone Arms
+@pushlist 'ItemTypes' 0x1451 //Bone Helm
+@pushlist 'ItemTypes' 0x1455 //Bone Hand
+//Chainmail
+@pushlist 'ItemTypes' 0x13f2 //Chainmail Gloves
+@pushlist 'ItemTypes' 0x13ef //Chainmail Arms
+@pushlist 'ItemTypes' 0x13c0 //Chainmail Coif
+@pushlist 'ItemTypes' 0x13c3 //Chainmail Leggings - uoo
+@pushlist 'ItemTypes' 0x13bf //Chainmail Tunic
+@pushlist 'ItemTypes' 0x1c09 //Chainmail skirt
+@pushlist 'ItemTypes' 0x13c4 //Chainmail Chest
+//Ringmail
+@pushlist 'ItemTypes' 0x13ee //Ringmail Sleeves
+@pushlist 'ItemTypes' 0x13ef //Ringmail Gloves - uoo
+@pushlist 'ItemTypes' 0x13ed //Ringmail Tunic
+@pushlist 'ItemTypes' 0x13f1 //Ringmail Leggins
+@pushlist 'ItemTypes' 0x140b //Ringmail Helmet
+//Studded
+@pushlist 'ItemTypes' 0x13e1 //Studded Leggings
+@pushlist 'ItemTypes' 0x13e2 //Studded Tunic
+@pushlist 'ItemTypes' 0x1c0d //Studded Bustier - uoo
+@pushlist 'ItemTypes' 0x13dd //Studded Gloves
+@pushlist 'ItemTypes' 0x13d6 //Studded Gorget
+@pushlist 'ItemTypes' 0x13d4 //Studded Sleeves - uoo
+@pushlist 'ItemTypes' 0x1dba //Studded Cap - uoo
+//Leather
+@pushlist 'ItemTypes' 0x13ce //Leather Gloves
+@pushlist 'ItemTypes' 0x13c5 //Leather Sleeves
+@pushlist 'ItemTypes' 0x13d3 //Leather Tunic
+@pushlist 'ItemTypes' 0x13d2 //Leather Pants
+@pushlist 'ItemTypes' 0x13c7 //Leather Gorget
+@pushlist 'ItemTypes' 0x1db9 //Leather Cap
+@pushlist 'ItemTypes' 0x1c01 //Leather Shorts
+//Female Armor
+@pushlist 'ItemTypes' 0x1c04 //Female Plate
+@pushlist 'ItemTypes' 0x1c05 //Female Plate Alt
+@pushlist 'ItemTypes' 0x1c0c //Female Studded Bustier
+@pushlist 'ItemTypes' 0x1c02 //Female Studded Armor
+@pushlist 'ItemTypes' 0x1c00 //Female Leather Shorts
+@pushlist 'ItemTypes' 0x1c06 //Female Leather Armor
+@pushlist 'ItemTypes' 0x1c07 //Female Leather Chest - uoo
+@pushlist 'ItemTypes' 0x1c08 //Female Leather Skirt
+@pushlist 'ItemTypes' 0x1c0a //Female Leather Bustier
+@pushlist 'ItemTypes' 0x1c0b //Female Leather Bustier
+//Fencing
+@pushlist 'ItemTypes' 0xf62  //Spear
+@pushlist 'ItemTypes' 0x1403 //Short Spear
+@pushlist 'ItemTypes' 0xe87  //Pitchfork
+@pushlist 'ItemTypes' 0x1405 //Warfork
+@pushlist 'ItemTypes' 0x1401 //Kryss
+@pushlist 'ItemTypes' 0xf52  //Dagger
+//Macing
+@pushlist 'ItemTypes' 0x13b0 //War axe
+@pushlist 'ItemTypes' 0xdf0  //Black Staff
+@pushlist 'ItemTypes' 0x1439 //War Hammer
+@pushlist 'ItemTypes' 0x1407 //War Mace
+@pushlist 'ItemTypes' 0xe89  //Quarter Staff
+@pushlist 'ItemTypes' 0x143d //Hammer Pick
+@pushlist 'ItemTypes' 0x13b4 //Club
+@pushlist 'ItemTypes' 0xe81  //Shepherds Crook
+@pushlist 'ItemTypes' 0x13f8 //Gnarled Staff
+@pushlist 'ItemTypes' 0xf5c  //Mace
+@pushlist 'ItemTypes' 0x143b //Maul
+//Swords
+@pushlist 'ItemTypes' 0x13b9 //Viking Sword
+@pushlist 'ItemTypes' 0xf61  //Longsword
+@pushlist 'ItemTypes' 0x1441 //Cutlass
+@pushlist 'ItemTypes' 0x13b6 //Scimitar
+@pushlist 'ItemTypes' 0xec4  //Skinning Knife
+@pushlist 'ItemTypes' 0x13f6 //Butcher Knife
+@pushlist 'ItemTypes' 0xf5e  //Broadsword
+@pushlist 'ItemTypes' 0x13ff //Katana
+@pushlist 'ItemTypes' 0xec3  //Cleaver
+//Axes
+@pushlist 'ItemTypes' 0xf43 //Hatchet
+@pushlist 'ItemTypes' 0xf45 //Executioners Axe
+@pushlist 'ItemTypes' 0xf4d //Bardiche
+@pushlist 'ItemTypes' 0xf4b  //Double Axe
+@pushlist 'ItemTypes' 0x143e //Halberd
+@pushlist 'ItemTypes' 0x13fb //Large Battle Axe
+@pushlist 'ItemTypes' 0x1443 //Two Handed Axe
+@pushlist 'ItemTypes' 0xf47  //Battle Axe
+@pushlist 'ItemTypes' 0xf49  //Axe
+@pushlist 'ItemTypes' 0xe85  //Pickaxe
+@pushlist 'ItemTypes' 0xe86  //Pickaxe
+//Bows
+@pushlist 'ItemTypes' 0x13fd //HeavyXbow - uoo
+@pushlist 'ItemTypes' 0xf50  //Xbow
+@pushlist 'ItemTypes' 0x13b2 //bow - uoo
+//Wands and Spellbooks
+@pushlist 'ItemTypes' 0xefa //spellbook - uoo
+@pushlist 'ItemTypes' 0xdf2 //slayer wands - uoo
+@pushlist 'ItemTypes' 0xdf3 //slayer wands - uoo
+@pushlist 'ItemTypes' 0xdf5 //wands - uoo
+//Instruments
+@pushlist 'ItemTypes' 0xe9c //drums - uoo
+@pushlist 'ItemTypes' 0xe9e //tambourine - uoo
+@pushlist 'ItemTypes' 0xeb3 //Lute
+@pushlist 'ItemTypes' 0xeb2 //Harp
+@pushlist 'ItemTypes' 0x2805 // Flute
+/////// Item Type Above \\\\\\\
+// User setup
+headmsg 'Select From Bag' 38
+promptalias 'FromBag'
+useobject 'FromBag'
+pause 700
+headmsg 'Select Sell Bag' 38
+promptalias 'SellBag'
+useobject 'SellBag'
+pause 700
+headmsg 'Select Keep Bag' 38
+promptalias 'KeepBag'
+useobject 'KeepBag'
+pause 700
+// Debug
+@clearjournal
+@clearignorelist
+@unsetalias 'IDme'
+// 120 Item ID does whole bag first
+if skill 'Item Identification' == 120
+  useskill 'Item Identification'
+  waitfortarget 1200
+  target! 'FromBag'
+  pause 1000
+endif
+for 0 to 'ItemTypes'
+  while @findtype 'ItemTypes[]' 'any' 'FromBag'
+    @setalias 'IDme' 'found'
+    @clearjournal
+    if skill 'Item Identification' == 120
+      clickobject 'IDme'
+    else
+      useskill 'Item Identification'
+      waitfortarget 5000
+      target! 'IDme'
+    endif
+    // Edit this pause longer if your ping is above 200
+    pause 800
+    if @injournal "not certain" system
+      headmsg "Skill failed, trying again" 38
+      pause 200
+    else
+      // Checks for any items you wish to keep
+      for 0 to 'ItemQuality'
+        if @injournal 'ItemQuality[]' 'system'
+          moveitem 'IDme' 'KeepBag'
+          @ignoreobject 'IDme'
+          @unsetalias 'IDme'
+          headmsg 'ItemQuality[]' 38
+        endif
+      endfor
+      pause 200
+      if @findobject 'IDme' 'any' 'FromBag'
+        @moveitem 'IDme' 'SellBag'
+        @ignoreobject 'IDme'
+        @unsetalias 'IDme'
+      endif
+    endif
+    pause 200
+  endwhile
+endfor
+headmsg 'All Done!' 38
+

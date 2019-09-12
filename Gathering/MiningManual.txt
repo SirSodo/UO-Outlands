@@ -1,0 +1,148 @@
+/////////////////////////////////////////////
+//    Sir Sodomizer's Manual Miner V 1.0   //
+// Macro mines & moves iron to pack animal //
+//   Notifies and pauses during captchas   //
+//  Grab pickaxes, a pack animal, and run  //
+/////////////////////////////////////////////
+// Debug
+@clearjournal
+@removetimer Mining
+@removelist NearBy
+@createlist NearBy
+// Check for pack animal, or target new one
+if not distance 'Packy' < 18
+  headmsg "Target Pack Animal" 38
+  promptalias 'Packy'
+endif
+// Opens backpack if no pickaxes found
+if not @findtype 0xe86 any backpack
+  useobject backpack
+  pause 650
+endif
+// If you have more than 34 tracking
+if skill "Tracking" > 34
+  // Checks to see if you've used the skill recently
+  if not @timerexists Tracking or @timer Tracking > 9200
+    // Use the skill
+    useskill 'Tracking'
+    waitforgump 0xfe5c638b 15000
+    replygump 0xfe5c638b 8
+    waitforgump 0xfe5c638b 15000
+    while not @injournal "hunt all hostile"  system
+      @clearjournal
+      replygump 0xfe5c638b 7
+      waitforgump 0xfe5c638b 15000
+      pause 250
+    endwhile
+    // If it says begin hunting in tracking menu
+    if @ingump 0xfe5c638b "Begin Hunting"
+      // Hit the button
+      replygump 0xfe5c638b 6
+      waitforgump 0xfe5c638b 5000
+    endif
+    // Close tracking menu
+    replygump 0xfe5c638b 0
+    @createtimer Tracking
+  endif
+endif
+while not dead
+  // Keeps working as long as world save isn't happening
+  while not @injournal "world is saving" system
+    // If Mining was not started, or it took longer than 5 seconds
+    if not timerexists Mining or timer Mining > 5000
+      @clearjournal
+      // Use pickaxe, or further step in
+      if not @useobject righthand
+        // Check for pickaxes in pack
+        if not @findtype 0xe86 any backpack
+          headmsg "No pickaxes!" 38
+          playsound 1086
+          stop
+        else
+          // Put it in your hands and uses it
+          equipitem found 2
+          pause 1000
+          @useobject righthand
+        endif
+      endif
+      waitfortarget 1000
+      // Checks to see if you are digging
+      if not @injournal "dig" system
+        @clearjournal
+        clearhands both
+        @removetimer Mining
+        pause 1000
+      endif
+      // while Macrocheck then makes a sound and waits 5s
+      while @ingump any "Captcha"
+        playsound 1095
+        pause 5000
+      endwhile
+      @createtimer Mining
+      target! self
+      pause 500
+    endif
+    // Scans system messages
+    if @injournal "world is saving" system
+      break
+      // If ore was mined it resets
+    elseif @injournal ore system
+      @clearjournal
+      removetimer Mining
+      // If no vein around it tries again 2 more times
+    elseif @injournal nearby system
+      @clearjournal
+      pushlist NearBy 1
+      settimer Mining 4500
+    endif
+    // Damage / Enemy alert, then pause 10s
+    @getenemy 'any'
+    if murderer enemy or criminal enemy
+      playsound 1069
+      headmsg "PK, RUN!" 38
+      pause 10000
+    endif
+    if @injournal "Now Tracking" system
+      playsound 1069
+      headmsg "PK, RUN!" 38
+      pause 10000
+    endif
+    if diffhits > 0
+      playsound 1088
+      headmsg "You're under attack" 38
+      pause 10000
+    endif
+    // If it didn't find a vein 3x it alerts you
+    if list NearBy > 2
+      headmsg "Move to another spot" 38
+      settimer Mining 2000
+      @clearlist NearBy
+      @clearjournal
+    endif
+    // If 28 stones to overloaded
+    if diffweight < 29
+      // If pack animal is near and has fewer than 180 ore
+      if @inrange 'packy' 2 and @counttype 0x19b9 0 'packy' < 226
+        // Move ore to pack animal
+        movetype 0x19b9 'backpack' 'packy' 0 0 0 0 25
+        pause 1000
+      endif
+    endif
+    // If 4 stones to overloaded stop
+    if diffweight < 5
+      headmsg "Overweight" 38
+      stop
+    endif
+  endwhile
+  // Handles saves
+  headmsg "Pausing For World Save" 38
+  createtimer saving
+  pause 500
+  while not @injournal "save complete" system and timer saving < 20000
+  endwhile
+  removetimer saving
+  headmsg "Save Over" 38
+  @clearjournal
+endwhile
+headmsg "You are dead, sorry" 38
+

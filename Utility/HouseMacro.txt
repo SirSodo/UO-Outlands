@@ -1,0 +1,58 @@
+///////////////////////////////////////
+// Sir Sodomizer's House Macro V 1.0 //
+// Uses detect, closes door, & hides //
+// Bans gray, enemy, crim, murderers //
+// Add pets/friends to ignore if you //
+// don't want them banned by script  //
+// Edit line 30-48 for doors to work //
+// Position X, Y, Z in Obj Inspector //
+///////////////////////////////////////
+// Add ignore here for pets and friends
+// Edit out // and replace SERIAL
+@ignoreobject 0xb33d6
+// @ignoreobject SERIAL
+// @ignoreobject SERIAL
+useskill 'Detecting Hidden'
+waitfortarget 500
+target! 'self'
+@unsetalias enemy
+if not dead 'self'
+  @getenemy 'murderer' 'enemy' 'criminal' 'gray' 'humanoid'
+  // Searches for enemy within 6 tiles
+  if @findobject 'enemy' any any any 6
+    autotargetobject! 'enemy'
+    msg 'I ban thee'
+    pause 500
+    @cancelautotarget
+  endif
+endif
+// Searches for open door graphic within 2 tiles
+// Change 0x6ee to the graphic of your open door
+if @findtype 0x6ee any ground any 2
+  // Makes sure those doors are on a certain X tile
+  // This verifies that I'm closing _MY_ front door
+  // If east facing use x, if south facing use y
+  // Open door and use object inspector to see its new position
+  if @x found == 1282 // 1282 is for my house, edit it for yours
+    // Double clicks
+    useobject found
+    pause 650
+  endif
+endif
+// Searches for open door graphic within 2 tiles
+// Change 0x6f0 to the graphic of your open door
+if @findtype 0x6f0 any ground any 2
+  // Makes sure those doors are on a certain X tile
+  // This verifies that I'm closing _MY_ front door
+  // If east facing use x, if south facing use y
+  // Open door and use object inspector to see its new position
+  if @x found == 1282 // 1282 is for my house, edit it for yours
+    // Double clicks door
+    useobject found
+    pause 650
+  endif
+endif
+// After 10 seconds it hides. Edit out with // or delete
+pause 10000
+useskill 'Hiding'
+

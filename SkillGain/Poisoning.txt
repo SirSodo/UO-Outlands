@@ -1,0 +1,47 @@
+//////////////////////////////////////////
+// Sir Sodomizer's Poison Trainer V 1.0 //
+// It will use a green keg in backpack  //
+// Then searches for poison pot in bag  //
+//  Uses poisoning, targets the potion  //
+// Then searches for the item to poison //
+// If poisoned then it chugs cure pots  //
+//  Fill bag with a few poison potions  //
+//  Many cure potions, and poison kegs  //
+//  Edit Line 14 to graphic of weapon   //
+//////////////////////////////////////////
+@createlist PoisonIt
+@clearlist PoisonIt
+@pushlist PoisonIt 0x1405 // <- Graphic if your weapon goes here
+// Makes sure backpack is open, edit out if problematic
+useobject backpack
+// Will run so long as you're below 100 skill and not dead
+while skill poisoning < 100 and not dead
+  // Uses green colored kegs in backpack
+  @usetype 0x1940 '363' 'backpack'
+  // 1 second wait
+  pause 1000
+  // Searches for poison potions, stops if it can't find any
+  if not @findtype 0xf0a 'any' 'backpack'
+    headmsg "I need a poison potion!" 91
+    stop
+  endif
+  useskill 'Poisoning'
+  waitfortarget 5000
+  target! 'found'
+  // Finds the graphic type you entered into line 14
+  @findtype PoisonIt[0] 'any' 'backpack'
+  waitfortarget 5000
+  target! found
+  // Waits 4 seconds to see if you're poisoned
+  pause 4000
+  // Until you're cured it will chug orange pots and then wait a second
+  while poisoned
+    if not usetype 0xf07 'any' 'backpack'
+      // If it can't use any
+      headmsg "No cure pots left, trying to log out!" 38
+      logoutbutton
+    endif
+    pause 1000
+  endwhile
+endwhile
+

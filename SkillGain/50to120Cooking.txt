@@ -1,0 +1,50 @@
+////////////////////////////////////
+// Sir Sodomizer's 50-120 Cooking //
+//  Use oven or kindling in pack  //
+// Put tools, rib or fish in pack //
+////////////////////////////////////
+// Runs until 120 cooking
+while skill cooking < 120
+  // Looks for lit campfire on ground and if you're above 29 camping
+  if not @findtype 0xde3 any ground any 2 and skill camping > 29
+    // Uses kindling in pack
+    @usetype 0xde1 any backpack
+    pause 1000
+  endif
+  // If amount of raw food in pack is below 3
+  if @counttype 0x9f1 any backpack < 3 and @counttype 0x97a any backpack < 3
+    headmsg "More Raw Food Needed" 38
+    stop
+  endif
+  // If can't use cooking tools
+  if not @usetype 0x1043 any backpack and not @usetype 0x97f any backpack
+    headmsg "No skillets or rolling pins left" 38
+    stop
+  endif
+  waitforgump 0x38920abd 15000
+  // Select training recipes
+  replygump 0x38920abd 100
+  waitforgump 0x38920abd 15000
+  if skill cooking < 95
+    // If using ribs select Cooked Ribs
+    if @counttype 0x9f1 any backpack > 2
+      replygump 0x38920abd 202
+      // If using Fish select Cooked Fish Steak
+    else
+      replygump 0x38920abd 204
+    endif
+    // If you've hit 95 or higher cooking
+  else
+    // If using ribs select Ribs Basket
+    if @counttype 0x9f1 any backpack > 2
+      replygump 0x38920abd 205
+      // If using Fish select Fish Steak Basket
+    else
+      replygump 0x38920abd 207
+    endif
+  endif
+  // Select
+  pause 1900
+endwhile
+headmsg "Congrats on hitting 120!" 38
+

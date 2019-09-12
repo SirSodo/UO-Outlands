@@ -1,0 +1,137 @@
+////////////////////////////////////
+//  Sir Sodomizer's Auto VetHeal  //
+// If buggy turn off other sysmsg //
+// like damage&skill gain chances //
+// Add permanent pet near line 32 //
+////////////////////////////////////
+// Bandage check
+if @counttype '0xe21' 'any' 'backpack' < 20
+  headmsg "Low bandages! Checking pack" 38
+  useobject backpack
+  pause 650
+endif
+// Checks to see if a list of pets exist
+if not listexists 'pets'
+  // If it doesn't find them it creates new set of pets
+  @createlist 'pets'
+  @clearlist 'pets'
+  // Loop 5 times, or until escape gets hit
+  for 5
+    headmsg "Select pet, or ESC to stop" 38
+    promptalias 'pet'
+    // If you selected a pet it gets added to the list
+    if @findobject 'pet'
+      pushlist 'pets' 'pet'
+    else
+      // If you hit escape it bails this for loop
+      break
+    endif
+  endfor
+endif
+// ADD FOREVER PETS BELOW
+@pushlist 'pets' 0x287e0 // Tanky the scarab
+@pushlist 'pets' 0x1ceab // Dragy the dragon
+// @pushlist 'pets'
+// @pushlist 'pets'
+// @pushlist 'pets'
+// @pushlist 'pets'
+// @pushlist 'pets'
+// ADD FOREVER PETS ABOVE
+@createlist 'HealIt'
+@clearlist 'HealIt'
+// Checks
+if @timerexists 'bandage' and @timer 'bandage' < 20000
+  headmsg "Resuming Vet Macro" 38
+else
+  headmsg "Starting Vet Macro" 38
+  @removetimer 'bandage'
+endif
+///////////
+while not dead
+  // Stops if you have no bandages
+  if counttype '0xe21' 'any' 'backpack' < 1
+    headmsg "No bandages!" 38
+    stop
+  endif
+  // If not bandaging
+  if @timerexists 'bandage'
+    // Scans system message for healing messages
+    if @injournal "finish applying" 'system' or @injournal "not damaged" 'system'
+      // Low bandage warning
+      if @counttype '0xe21' 'any' 'backpack' < 20
+        headmsg "Low bandages!" 38
+      endif
+      @removetimer "Bandage"
+      pause 150
+    elseif @injournal "close enough" 'system' or @injournal "little damage" 'system'
+      @removetimer "Bandage"
+      pause 150
+      // Timeout of 20s. 5s save + 8s bandage + 7s push
+    elseif @timer "Bandage" > 20000 or @injournal "resurrect" 'system'
+      @removetimer "Bandage"
+      pause 150
+    endif
+  else
+    @createlist 'HealIt'
+    @clearlist 'HealIt'
+    pause 150
+    for 0 to pets
+      // Checks to see if pet is onscreen
+      if @inrange pets[] 18
+        // Adds the first pet on the list to be healed
+        if list 'HealIt' < 1
+          pushlist 'HealIt' pets[]
+        endif
+        // Checks to see who is most hurt
+        if diffhits pets[] > diffhits HealIt[0]
+          // Removes less hurt pet
+          @clearlist HealIt
+          // Adds most hurt pet
+          @pushlist 'HealIt' pets[]
+        endif
+      endif
+    endfor
+    // If you're missing more than 15 HP and have over 29 healing
+    if diffhits > 15 and skill healing > 29
+      if not hidden
+        @createtimer 'bandage'
+        headmsg "Bandaging" 38
+        @clearjournal
+        bandageself
+        pause 200
+        // Double check to make sure you weren't busy
+        if @injournal "perform" 'system'
+          pause 300
+          bandageself
+          @clearjournal
+          @settimer 'bandage' 0
+        endif
+      endif
+      // If more than 19% damaged or poisoned
+    elseif @diffhits 'HealIt[0]' > 19 or @poisoned 'HealIt[0]'
+      // If the pet is 1 tile away
+      if @inrange 'HealIt[0]' 1
+        @createtimer 'bandage'
+        // Pushes timer to 7s, since timeout is 20s due to healing
+        @settimer 'bandage' 7000
+        @clearjournal
+        // Vets pet
+        bandage 'HealIt[0]'
+        pause 200
+        // Double check to make sure you weren't busy
+        if @injournal "perform" 'system'
+          pause 300
+          bandage 'HealIt[0]'
+          @clearjournal
+          // Pushes timer to 7s, since timeout is 20s due to healing
+          @settimer 'bandage' 7000
+        endif
+        // If pet is more than 1 tile away
+      else
+        headmsg "Pet too far to heal" 38
+        pause 2000
+      endif
+    endif
+  endif
+endwhile
+
