@@ -1,0 +1,279 @@
+/////////////////////////////////////////
+// Sir Sodomizer's 50-120 Taming V 1.1 //
+//  Needs veterinary to heal tank pet  //
+// Stand behind tank pet while taming  //
+// If you've healing it heals you too  //
+// Will auto tame whatever is on list  //
+//  Renames, releases, kills, ignores  //
+// Kills mob when you have maxed gains //
+// Alert if you hit 2.5 passive taming //
+// You can add tamables at top of list //
+//  Edit out // from before @pushlist  //
+// Use Object Inspector to get graphic //
+/////////////////////////////////////////
+@createlist 'Tamables'
+@clearlist 'Tamables'
+// @pushlist 'Tamables'
+// @pushlist 'Tamables'
+// @pushlist 'Tamables'
+// @pushlist 'Tamables'
+@pushlist 'Tamables' 0x51 // 40% Giant Frog
+@pushlist 'Tamables' 0x13d // 40% Giant Bat
+@pushlist 'Tamables' 0x50 // 45% Colossal Frog
+@pushlist 'Tamables' 0xe1 // 45% Wolf
+@pushlist 'Tamables' 0x10e // 50% Rock Guar
+@pushlist 'Tamables' 0x2e0 // 55% Swamp Spider
+@pushlist 'Tamables' 0x12e // 55% Corpse Eater
+@pushlist 'Tamables' 0xd5 // 60% Cave Bear
+@pushlist 'Tamables' 0x1d // 60% Silverback
+@pushlist 'Tamables' 0x86 // 60% Monitor
+@pushlist 'Tamables' 0x2da // 60% Primodrial
+@pushlist 'Tamables' 0xd2 // 65% Desert Ostard
+@pushlist 'Tamables' 0xa9 // 65% Carrion Beetle / 70% Scarab
+@pushlist 'Tamables' 0x30 // 65% Giant Scorpion
+@pushlist 'Tamables' 0xd6 // 65% Jaguar
+@pushlist 'Tamables' 0x2d7 // 70% Asp
+@pushlist 'Tamables' 0x11f // 75% Colossal Swamp Slug
+@pushlist 'Tamables' 0x2ce // 75% Drake Whelps / Dragon Whelp
+@pushlist 'Tamables' 0x2de // 75% Chameleon
+@pushlist 'Tamables' 0x13b // 80% deep crawlers
+@pushlist 'Tamables' 0x15 // 80% Adder
+@pushlist 'Tamables' 0x2cb // 80% Bullvore
+@pushlist 'Tamables' 0x3c // 85% Drake Male
+@pushlist 'Tamables' 0x3d // 85% Drake Female
+@pushlist 'Tamables' 0x13b // 90% Sand Crawler
+@pushlist 'Tamables' 0x2d9 // 90% Husk Crab
+@pushlist 'Tamables' 0x3a // 95% Dragon Male
+@pushlist 'Tamables' 0x3b // 95% Dragon Female
+@pushlist 'Tamables' 0xc // 95% Dragon
+@pushlist 'Tamables' 0x27 // 95% Molten Mongbat
+@pushlist 'Tamables' 0x33 // 100% Snowdrift
+@pushlist 'Tamables' 0x308 // 110% Aegis Minion
+@pushlist 'Tamables' 0x125 // 110% Sphinx
+// If it can't find tank, or further than 12 tiles away
+if not distance 'TankPet' < 12
+  headmsg "Target Tank Pet" 38
+  promptalias 'TankPet'
+endif
+// Makes search it can't see your tank during searches
+ignoreobject 'TankPet'
+@createtimer "BandageCheck"
+// If you manually restart the macro it starts taming again
+removetimer "Taming"
+@clearjournal
+/////////////////////
+// Keeps going until you hit 120 skill
+while skill "Animal Taming" < 120 and not dead
+  // Keeps working as long as world save isn't happening
+  while not @injournal "world is saving" system and not dead
+    // If fewer than 20 bandages
+    if @counttype '0xe21' 'any' 'backpack' < 20
+      // Only sends message every minute
+      if timer "BandageCheck" > 60000
+        headmsg "Low bandages!" 38
+        @createtimer "BandageCheck"
+      endif
+    endif
+    // If tamed renames, attacks, releases, and ignores
+    if friend 'TameMe'
+      headmsg "Tamed Successfully" 38
+      rename 'TameMe' Tamed
+      // Waits 3s for new tamed animal to come closer
+      pause 3000
+      // Releases tamed animal via context
+      if skill herding == 0
+        // Option 10 is 9th, Release
+        waitforcontext 'TameMe' 9 15000
+      else
+        // Changes to 10th since we have herding
+        waitforcontext 'TameMe' 10 15000
+      endif
+      // Clicks accept gump
+      waitforgump 0x909cc741 15000
+      replygump 0x909cc741 1
+      // Herding check, changes context menu
+      if skill herding == 0
+        // Option '2' is 1st, Kill
+        waitforcontext 'TankPet' 1 15000
+      else
+        // Changes to '3' aka 2nd since we have herding
+        waitforcontext 'TankPet' 2 15000
+      endif
+      waitfortarget 5000
+      target! 'TameMe'
+      attack 'TameMe'
+      // Ignores and unsets so you don't attempt to tame again
+      ignoreobject 'TameMe'
+      @unsetalias 'TameMe'
+    endif
+    // If you've hit your cap of gains per animal
+    if @injournal "maximum taming" system
+      // It locks your skill so you don't waste passive
+      setskill "Animal Taming" locked
+      headmsg "Too many gains, killing creature & locking Taming" 38
+      @clearjournal
+      // Herding check, changes context menu
+      if skill herding == 0
+        // Option '2' is 1st, Kill
+        waitforcontext 'TankPet' 1 15000
+      else
+        // Changes to '3' aka 2nd since we have herding
+        waitforcontext 'TankPet' 2 15000
+      endif
+      target! 'TameMe'
+      attack 'TameMe'
+      ignoreobject 'TameMe'
+      @unsetalias 'TameMe'
+    endif
+    // If you've hit max passives it alerts you
+    if @injournal "(2.5)" system
+      headmsg "Max passives hit, did you want to stop?" 38
+      playsound 1097
+      @clearjournal
+    endif
+    // If not bandaging
+    if not @timerexists "Bandage"
+      // If you are hurt and have over 29 healing
+      if diffhits > 0 and skill healing > 29
+        warmode on
+        warmode off
+        // Herding check, changes context menu
+        if skill herding == 0
+          // Option '4' is 3rd, Guard
+          waitforcontext 'TankPet' 3 15000
+        else
+          // Changes to '5' aka 4th since we have herding
+          waitforcontext 'TankPet' 4 15000
+        endif
+        // Low bandage alert
+        headmsg "Warning, you are being attacked" 38
+        createtimer "Bandage"
+        @clearjournal
+        bandage self
+        // Otherwise if pet is more than 17% damaged or poisoned
+      elseif @diffhits 'TankPet' > 17 or @poisoned 'TankPet'
+        // If the pet is more than 1 tile away
+        if @distance 'TankPet' > 1
+          // Herding check, changes context menu
+          if skill herding == 0
+            // Option '5' is 4th, Follow
+            waitforcontext 'TankPet' 4 15000
+          else
+            // Changes to '6' aka 5th since we have herding
+            waitforcontext 'TankPet' 5 15000
+          endif
+          pause 2000
+        endif
+        createtimer "Bandage"
+        settimer "Bandage" 7500
+        @clearjournal
+        bandage 'TankPet'
+        pause 500
+      endif
+      // If you are bandaging
+    else
+      // Scans system message for healing messages
+      if @injournal "finish applying" 'system' or @injournal "not damaged" 'system'
+        // Low bandage warning
+        if @counttype '0xe21' 'any' 'backpack' < 20
+          headmsg "Low bandages!" 38
+        endif
+        @removetimer "Bandage"
+        pause 150
+      elseif @injournal "close enough" 'system' or @injournal "little damage" 'system'
+        @removetimer "Bandage"
+        pause 150
+        // Timeout of 20s. 5s save + 8s bandage + 7s push
+      elseif @timer "Bandage" > 20000
+        @removetimer "Bandage"
+        pause 150
+      endif
+    endif
+    // If it doesn't find the animal you're taming
+    if not @inrange 'TameMe' 10
+      // Find a pet on your tamables list
+      for 0 to 'Tamables'
+        // Searches for it within 10 tiles
+        if @findtype 'Tamables[]' any ground any 10
+          @setalias 'TameMe' found
+          // If it's friendly or blue ignore it
+          if friend 'TameMe' or innocent 'TameMe'
+            ignoreobject 'TameMe'
+            @unsetalias 'TameMe'
+          endif
+          break
+        endif
+      endfor
+      // If it does find them
+    else
+      // If not taming
+      if not @timerexists "Taming" and @distance 'TameMe' < 10
+        // Sets taming up so you can gain
+        setskill "Animal Taming" up
+        // Changes context menu depending on herding
+        if skill herding == 0
+          // Option '5' is 4th, Follow
+          waitforcontext 'TankPet' 4 15000
+        else
+          // Changes to '6' aka 5th since we have herding
+          waitforcontext 'TankPet' 5 15000
+        endif
+        useskill 'Animal Taming'
+        waitfortarget 5000
+        target! 'TameMe'
+        @clearjournal
+        createtimer "Taming"
+        warmode on
+        warmode off
+      endif
+    endif
+    // If you're been taming 10+ seconds
+    if @timer "Taming" > 10000
+      // Wait 3.3s to see if you've failed
+      waitforjournal "fail to tame" 3300
+      removetimer "Taming"
+    endif
+  endwhile
+  // Handles saves
+  headmsg "Pausing For World Save" 38
+  createtimer saving
+  pause 500
+  // Until it sees save complete, or if 20 seconds have passed it pauses
+  while not @injournal "save complete" system and timer saving < 20000
+  endwhile
+  removetimer saving
+  headmsg "Save Over" 38
+  @clearjournal
+  // Reduces Taming timer by 4 seconds to compensate for save
+  // Edit times if saves are much longer than 4 seconds
+  if @timerexists Taming
+    if timer Taming < 4000
+      settimer Taming 0
+    elseif timer Taming < 5000
+      settimer Taming 1000
+    elseif timer Taming < 6000
+      settimer Taming 2000
+    elseif timer Taming < 7000
+      settimer Taming 3000
+    elseif timer Taming < 8000
+      settimer Taming 4000
+    elseif timer Taming < 9000
+      settimer Taming 5000
+    elseif timer Taming < 10000
+      settimer Taming 6000
+    elseif timer Taming < 11000
+      settimer Taming 7000
+    elseif timer Taming < 12000
+      settimer Taming 8000
+    elseif timer Taming < 13000
+      settimer Taming 9000
+    elseif timer Taming < 14000
+      settimer Taming 10000
+    elseif timer Taming < 15000
+      settimer Taming 11000
+    endif
+  endif
+endwhile
+headmsg "You are dead, sorry" 38
+logoutbutton
+
