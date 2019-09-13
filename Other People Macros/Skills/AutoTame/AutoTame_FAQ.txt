@@ -1,0 +1,45 @@
+Updated 25/02/2019
+
+
+ This macro sets out to automate the task of leveling taming
+
+ Things required?
+ a tank pet (I recommend a Rock Guar), Veterinary (Can be dropped once GM Taming)a LOT of bandages.
+
+ What does it do?
+ It will look for certain graphics and tame them, once tamed it will rename them to 'killme' and proceed to kill the pet
+ Dex skills are not required to kill the tame, but helps. If you are going for a magery build - I suggest having one or two pets
+ to assist in killing the tamed pet. Ensure your kill pets + tank pet + tamed pet do not exceed the follower count, otherwise
+ they will not obey your commands to kill the freshly tamed pet.
+
+ How do I use it?
+ This works very well for single spawns of tames, without any other additional creatures to potentially aggro you
+ This is achieved by setting your tank pet in a position where any spawned monsters will be closer to your pet than you.
+ Command it to stop, and stand one tile behind/diagonal to it, to ensure that anything that spawns will target your pet
+ Where do you suggest I tame these?
+ Low traffic areas are best, however in some cases such as Molten Mongbats and Bullvores, their spawns are much easier in dungeons to deal with
+
+ Do I have to tame these creatures?
+ No. Feel free to change any graphics to whatever you prefer. I have leveled three tamers with this macro, and have merely placed suggestions to help those who might need it. :)
+
+ Why do Sand Crabs have a very large skill gain window listed?
+ Due to these being a very passive creature, and in some very out of the way areas, I find these are worth macroing on over a couple of days. This will GM anat/tactics/weaponskill very quickly, as taming a creature gives Active Skill Bonus. Feel free to ignore this suggestion if you want to go slightly faster.
+
+ Why does the bandage not complete on my tank pet?
+ The script was written with 100 Dex in mind, you will need to edit the heal portions with a pause which is long enough for your bandage timer.
+
+ Where should I tame?
+ From my own experience (1x 120 Tamer and 2x GM Tamer) follow the below guide; I try to find isolated spawns with fairly set spawn tiles
+
+Shallow Water (50.0 - 52.5) - Find a quiet isolated spawn on the coast, plenty to choose from
+Sand Crab (55.0 - 70.0) - East of Prevalia Zoo, there's a single spawn - I camp this for a couple of days to 70 (this also gets dex skills to GM in this time)
+Scarab (70.0 - 72.5) - Oasis south of Ossuary
+Drake Whelp (75.0 - 77.5) - I find the north corner as soon as you get into level2 is quietest, your pet will need to tank the drake also
+Bullvore (80.0 - 82.5) - Inferno has a couple of isolated spawns, much easier to macro than in the desert.
+Drake (85.0 - 87.5) - Same spot as drake whelps
+Husk Crab (90.0 - 92.5) - South of Prevalia at the ship wreck. I tend to go to the further spawns as people don't usually venture that far in
+Molten Mongbat (95.0 - 97.5) Inferno, Level 2 has a fairly quiet spawn just as you enter. I find reds ignore you if you're naked (most of the time)
+Snow Drift (100.0 - 102.5) - Ice Fortress, some fairly decent isolated spawns. 
+Earth Drake (105.0 - 107.5) - Back side of Mount Petram Level 3.
+Aegis Minion (110.0 - 112.5) - there's a room South West with an aegis imp, slime and minion. Afk in a corner and let your pet offtank everything.
+Earth Dragon (115.0 - 117.5) - Same spot as drakes, back of petram

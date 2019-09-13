@@ -1,0 +1,232 @@
+/////////////////////////////////////////////
+// UO Steam Ship assist macro
+// for Outlands
+// by Jewele
+// 
+// Heals you and nearby crew, arms your bow, attacks nearest grey,
+// begs your crew if you have the skill, throws explosions if you 
+// have them in your pack.
+//
+// This script was made to allow me to focus on firing cannons,
+// positioning ship, and micro-managing the other tasks in ship
+// PvM without worrying about having to attack or heal crew.
+//
+// UO Steam in Outlands has disabled ability to query health
+// for anything but yourself and pets. Therefore, the script
+// attempts to bandage crew near you, and if they need a heal,
+// keeps bandaging same target. If not, moves to next one.
+//
+// *IMPORTANT*
+//
+// Every time you spawn new crew (summon) - you have:
+// 1) Go to Macros Tab
+// 2) Click Active Objects
+// 3) Clear Active Objects
+// 4) Re-run macro
+//
+// How to use?
+// -----------
+// 1) Run script
+// 2) Select all crew members
+// 3) As long as those exact crew stay on ship, you can run 
+//    script any time to heal them.
+// 4) Stay near injured crew to heal them
+//
+// Important Notes
+// ---------------
+// * The script will pause if you have an active target up. This 
+//   assumes you are firing your cannons, etc.
+// * Remember if you send crew below decks, you need to re-target
+//   them when they come back up. Crew are spawned with new IDs
+//   every time.
+//
+// Version 1.0
+// -----------
+// First release! yay! 
+//
+// UOSTEAM COPY-PASTE BELOW THIS LINE
+/////////////////////////////////////////////
+
+@clearjournal
+@unsetalias 'hurt'
+if not listexists 'crew'
+    sysmsg "When prompted select crewman after another" 88
+    sysmsg "When all crew are selected, press ESC" 88
+    @createlist 'crew'
+    //
+    // Maximum 5
+    //
+    for 10
+        sysmsg "Select next crew" 88
+        promptalias 'crewman'
+        if @findobject 'crewman'
+            pushlist 'crew' 'crewman'
+            sysmsg "Your crewman has been saved, press ESC if you have no more crew" 44
+        else
+            break
+        endif
+    endfor
+    sysmsg "Thank you, crew saved, script is ready" 44
+endif
+
+while not dead
+  //
+  // Script indicator for player
+  //
+  headmsg "[FIGHT]" 92
+  //
+  // Pause 2 seconds for active targets
+  //
+  if @targetexists
+    headmsg "(active target)" 66
+    pause 1000
+    replay
+  endif
+  //
+  // arm bow/crossbow
+  //
+  if not @findlayer 'self' 1
+    // xbow
+    @findtype 0xf50 'any' 'backpack'
+    @equipitem 'found' 1
+    // heavy xbow
+    @findtype 0x13fd 'any' 'backpack'
+    @equipitem 'found' 1
+    // bow
+    @findtype 0x13b2 'any' 'backpack'
+    @equipitem 'found' 1
+    pause 1000
+  endif
+  //
+  // low bandages check
+  //
+  if counttype '0xe21' 'any' 'backpack' == 0
+    headmsg "Out of bandages!" 38
+    stop
+  endif
+  //
+  // out of bandages check
+  //
+  if counttype '0xe21' 'any' 'backpack' < 20
+    headmsg "Low on bandages" 38
+    pause 100
+  endif
+  //
+  // attack enemy near you
+  //
+  @unsetalias 'enemy'
+  @Getenemy 'murderer' 'enemy' 'criminal' 'gray'
+  attack! 'enemy'
+  //
+  // wait for bandage finish
+  //
+  if @timerexists 'healing'
+    if timer 'healing' > 15000
+      @removetimer 'healing'
+    endif
+    if @injournal 'heal' 'system'
+      @removetimer 'healing'
+    endif
+    if @injournal 'cure' 'system'
+      @removetimer 'healing'
+    endif
+    if @injournal 'finish' 'system'
+      @removetimer 'healing'
+    endif
+  endif
+  //
+  // Do I need a bandage?
+  //
+  if not @timerexists 'healing'
+    if poisoned 'self' or diffhits > 10
+      @createtimer 'healing'
+      headmsg "(bandaging)" 67
+      bandageself
+      @clearjournal
+    endif
+  endif
+  //
+  // Does crew need a bandage?
+  //
+  if not @timerexists 'healing'
+    // 
+    // if hurt healed crew is nearby
+    //
+    if findalias 'hurt' and @inrange 'hurt' 2
+      @clearjournal
+      usetype 0xe21 'any' 'backpack'
+      waitfortarget 5000
+      target! 'hurt'
+      settimer 'healing' 0
+      pause 1000
+      if @injournal 'not damaged' 'system'
+        @removetimer 'healing' 
+        @unsetalias 'hurt'
+      endif
+    else
+      for 0 to 'crew'
+        if @inrange crew[] 2
+          @clearjournal
+          usetype 0xe21 'any' 'backpack'
+          waitfortarget 5000
+          target! crew[]
+          settimer 'healing' 0
+          pause 1000
+          if @injournal 'not damaged' 'system'
+            @removetimer 'healing' 
+          else
+            headmsg '(Healing crew)' 66
+            setalias 'hurt' crew[]  
+            break
+          endif
+        endif
+      endfor
+    endif
+  endif
+  //
+  // throw explosion if you have them
+  //
+  if @timerexists 'explosion'
+    //
+    // reset after 11 seconds
+    //
+    if timer 'explosion' > 11500
+      removetimer 'explosion'
+    endif
+  else
+    if @inrange 'enemy' 15
+      if not @inrange 'enemy' 6
+        if counttype 0xf0d 'any' 'backpack' > 0
+          findtype 0xf0d 'any' 'backpack' > 0
+          useobject 'found'
+          waitfortarget 5000
+          target! 'enemy'
+          msg "lookout!" 67
+          createtimer 'explosion'
+        endif
+      endif
+    endif
+  endif
+  //
+  // Begging
+  //
+  if @timerexists 'begging'
+    //
+    // reset after 1 min
+    //
+    if timer 'begging' > 60000
+      removetimer 'begging'
+    endif
+  else
+    if skill 'begging' >  50
+      @Getfriend 'friend' 'innocent'
+      if @inrange 'friend' 15
+        useskill 'Begging'
+        waitfortarget 5000
+        target! 'friend'
+        createtimer 'begging'
+      endif
+    endif
+  endif
+  pause 1000
+endwhile

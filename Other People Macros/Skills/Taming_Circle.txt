@@ -1,0 +1,97 @@
+/////////////////////////////////////////////
+// UO Steam Taming Macro
+// for Outlands
+//
+// This is a "circle" taming script because it walks you in a circle around
+// an aggressive tame, keeping you just out of harms way. To use it,
+// start with the mob coming at you from a south-southwest direction.
+//
+// Each taming attempt occurs at the "top" of the circle.
+//
+// Why attack the creature? The tames seem to lose interest 
+// following you after a while  so you need to attack them.
+//
+// How much room do you need? Not much - only about a 10x10 square
+//
+// Start in PEACE mode. The War mode toggle is to get you out of attacking your own pet.
+//
+// It will work for you - just need to tune it to your connection and game speed.
+//
+// v1.0
+// ----
+// * Initial version
+// 
+// v1.1
+// ----
+// * Adjusted for higher ping rates
+//
+/////////////////////////////////////////////
+headmsg "Select creature to tame" 55
+promptalias 'tobetamed'
+if @findobject 'tobetamed'
+  while name 'tobetamed' != 'Ozy'
+    autotargetobject 'tobetamed'
+    @setskill 'animal taming' 'up'
+    useskill 'animal taming'
+    run "Northeast"
+    walk "Northeast"
+    walk "Northeast"
+    walk "Northeast"
+    walk "Northeast"
+    walk "Northeast"
+    run "East"
+    walk "East"
+    walk "East"
+    walk "East"
+    walk "East"
+    walk "East"
+    run "Southeast"
+    walk "Southeast"
+    walk "Southeast"
+    walk "Southeast"
+    walk "Southeast"
+    walk "Southeast"
+    run "South"
+    walk "South"
+    walk "South"
+    walk "South"
+    walk "South"
+    walk "South"
+    run "Southwest"
+    walk "Southwest"
+    walk "Southwest"
+    walk "Southwest"
+    walk "Southwest"
+    walk "Southwest"
+    run "West"
+    walk "West"
+    walk "West"
+    walk "West"
+    walk "West"
+    walk "West"
+    run "Northwest"
+    walk "Northwest"
+    walk "Northwest"
+    walk "Northwest"
+    walk "Northwest"
+    walk "Northwest"
+    run "North"
+    walk "North"
+    walk "North"
+    walk "North"
+    walk "North"
+    walk "North"
+    pause 100
+    attack! 'tobetamed'
+    pause 100
+    warmode 'on'
+    pause 100
+    @rename 'tobetamed' 'Ozy'
+    pause 100
+    warmode 'off'
+    pause 100
+  endwhile
+  msg 'all follow me'
+  @ignoreobject 'tobetamed'
+  @unsetalias 'tobetamed'
+endif

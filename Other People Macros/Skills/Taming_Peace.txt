@@ -1,0 +1,52 @@
+/////////////////////////////////////////////
+// UO Steam Taming Macro
+// for Outlands
+//
+// This is for looping peace and tame attempts on a hostile creature.
+// It will first make sure your target is peaced, then tame. This is 
+// good for semi-afk taming - just watch it once in a while.
+//
+// IMPORTANT - chance the timer to match your peace time. Im 90 peace
+// so I can peace for 1 minute - so I allow 45 seconds for taming 
+// attempts before I peace again. Play with it until you find your 
+// best time for your peace.
+//
+// v1.0
+// ----
+// * Initial version
+//
+/////////////////////////////////////////////
+headmsg "Select creature to tame" 55
+promptalias 'tobetamed'
+@removetimer 'peace'
+@createtimer 'peace'
+@clearjournal
+if @findobject 'tobetamed'
+  while name 'tobetamed' != 'Ozy'
+    //
+    // Peace
+    //
+    while not injournal 'play successfully' 'system'
+      autotargetobject 'tobetamed'
+      useskill 'peacemaking'
+      pause 11000
+      @settimer 'peace' 0
+    endwhile
+    //
+    // Tame
+    //
+    @setskill 'animal taming' 'up'
+    autotargetobject 'tobetamed'
+    useskill 'animal taming'
+    pause 13000
+    @rename 'tobetamed' 'Ozy'
+    //
+    // Set your peace upper limit here
+    //
+    if timer 'peace' > 45000
+      @clearjournal
+    endif
+  endwhile
+  @ignoreobject 'tobetamed'
+  @unsetalias 'tobetamed'
+endif

@@ -1,0 +1,136 @@
+/////////////////////////////////////////////
+// UO Steam Lumber Macro
+// for Outlands
+//
+// * just chops wood, nothing else
+// 
+// Version 1.0
+// -----------
+// First release
+//
+// Version 1.1
+// -----------
+// Added PK detection and warnings. To use this
+// activate your tracking and set to [REDS]
+//
+/////////////////////////////////////////////
+
+sysmsg "UO Outlands Lumber script" 88
+sysmsg "Version 1.1" 88
+
+@useobject 'backpack'
+pause 1000
+
+//
+// Clear hands
+//
+clearhands 'both'
+pause 2000
+
+//
+// Create Messages list
+//
+@removelist 'Messages'
+@createlist 'Messages'
+
+//
+// While alive
+//
+while hits > 0
+
+    @clearjournal
+
+    //
+    // Check weight
+    // 
+    if diffweight < 10
+        headmsg 'I am too heavy, please unload me' '23'
+        pause 5000
+        continue    
+    endif
+
+    // 
+    // Check holding hatchet
+    // 
+    if not @findlayer 'self' 2
+        @unsetalias 'Hatchet'
+    endif
+
+    // 
+    // Equip hatchet or stop with msg
+    // 
+    if not findalias 'Hatchet'
+        if @findtype 0xf44 'any' 'backpack'
+            @setalias 'Hatchet' 'found'
+            // This equips it
+            useobject 'Hatchet'
+            pause 1000
+        else
+            headmsg 'No Hatchet found' '55' 'self'
+            stop
+        endif
+    endif
+
+    @canceltarget
+
+
+    //
+    // Chop Wood
+    //
+    useobject 'Hatchet'
+    waitfortarget 5000
+    target! 'self'
+    pause 100
+
+    // 
+    // Convert logs into boards
+    //
+    @usetype '0x1bdd'  
+
+    //
+    // Wait for results
+    //
+    for 60
+        if @injournal 'enough wood here' 'system'
+            pushlist 'Messages' 'You need to move'
+            break
+        elseif @injournal 'You chop' 'system'
+            break
+        elseif @injournal 'fail to' 'system'
+            break
+        elseif @injournal 'You can' 'system'
+            break
+        elseif @injournal 'harvestable' 'system'
+            pushlist 'Messages' 'You need to move'
+            break
+        elseif not @findlayer 'self' 2
+            headmsg 'NO AXE EQUIPPED' '23'
+            break
+        else
+            pause 100
+        endif
+    endfor
+
+    //
+    // See if character really needs to move or not
+    // 
+    if list 'Messages' > 2
+        headmsg 'Find another tree!' 44
+        removelist 'Messages'
+        createlist 'Messages'
+        pause 3000
+    endif
+
+    // 
+    // PK Detect 
+    //
+    if @injournal "now tracking" 'system'
+        for 10
+            sysmsg 'Murderer incoming' 33
+            headmsg 'Murderer incoming' 33
+            pause 200
+            stop
+        endfor
+    endif
+
+endwhile

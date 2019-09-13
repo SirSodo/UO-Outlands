@@ -1,0 +1,75 @@
+/////////////////////////////////////////////
+// UO Steam Attack Enemy Macro
+// for Outlands
+//
+// This macro _attacks_ your 'enemy' alias, first checking
+// if you have a target queue open, and if so, dropping that
+// on your current enemy, then runs your dress macro, then
+// attacks your enemy.
+//
+// This is useful for an archer mage (example) - cast explosion, 
+// leave it primed, run this macro - it will drop the spell
+// on your current enemy, run your dress macro (for bow),
+// then attack your target for bow shot.
+//
+// Pure melee types can remove the target check or just leave it in
+// as it will hurt nothing and get skipped.
+//
+// If you don't have spell casting you can still use this,
+// it will just skip the target checks. Casters can decide
+// whether or not they want to go into war mode (or just remove it)
+//
+// Warning : do not run this if you have a friendly spell up!
+//
+// Recommendation:
+// ===============
+// [MOUSEDOWN] = 'getenemy.txt'
+// [MOUSEUP] = 'attackenemy.txt'
+// 
+// How to use:
+// ===========
+// 1) Save your current equipment as 'default'
+//    in dress macro. 
+// 2) Run script any time to attack your current enemy.
+//
+// Version History:
+// ================
+// * 1.0 initial release
+//
+/////////////////////////////////////////////
+
+//
+// check alias and attack
+//
+if @findobject 'enemy'
+
+    headmsg "*Attacking*" 22
+    // 
+    // drop queued spell if enemy in range
+    //
+    if targetexists 
+        if @inrange 'enemy' 15 and not dead 'enemy'
+            target! 'enemy'
+        endif
+    endif
+
+    //
+    // run dress macro -  this will not cancel a queued spell
+    //
+    dress 'default'
+    while dressing
+    endwhile
+
+    //
+    // if you are a pure caster, take this part out
+    //
+    attack! 'enemy'
+    if not war 'self'
+        warmode 'on'
+    endif
+
+else
+    headmsg "No targets" 44
+endif
+@clearusequeue
+@cancelautotarget

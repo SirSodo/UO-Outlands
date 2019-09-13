@@ -1,0 +1,150 @@
+if listexists 'ljRow'
+  clearlist 'ljRow'
+else
+  createlist 'ljRow'
+endif
+if listexists 'ljColumn'
+  clearlist 'ljColumn'
+else
+  createlist 'ljColumn'
+endif
+if listexists 'ljCommand'
+  clearlist 'ljCommand'
+else
+  createlist 'ljCommand'
+endif
+@pushlist 'ljCommand' 'moveRight'
+clearhands 'both'
+pause 500
+if not @findlayer 'self' 2 and @findtype 0xf44 'any' 'backpack'
+  equipitem 'found' 2
+  setalias 'axe' 'found'
+endif
+while @findobject 'axe'
+  if @inlist 'ljCommand' 'moveRight'
+    turn 'North'
+    walk 'North'
+    turn 'East'
+    walk 'East'
+    turn 'South'
+    walk 'South'
+    turn 'East'
+    walk 'East'
+    turn 'South'
+    walk 'South'
+    turn 'East'
+    walk 'East'
+    turn 'North'
+    walk 'North'
+    @pushlist 'ljCommand' 'doChop'
+    @pushlist 'ljRow' 1
+  elseif @inlist 'ljCommand' 'moveLeft'
+    turn 'North'
+    walk 'North'
+    turn 'West'
+    walk 'West'
+    turn 'South'
+    walk 'South'
+    turn 'West'
+    walk 'West'
+    turn 'South'
+    walk 'South'
+    turn 'West'
+    walk 'West'
+    turn 'North'
+    walk 'North'
+    @pushlist 'ljCommand' 'doChop'
+    @pushlist 'ljRow' 1
+  elseif @inlist 'ljCommand' 'moveNorth'
+    turn 'West'
+    walk 'West'
+    turn 'North'
+    walk 'North'
+    turn 'East'
+    walk 'East'
+    turn 'North'
+    walk 'North'
+    turn 'West'
+    walk 'West'
+    turn 'North'
+    walk 'North'
+    @pushlist 'ljCommand' 'doChop'
+    @pushlist 'ljColumn' 1
+  elseif @inlist 'ljCommand' 'moveSouth'
+    turn 'West'
+    walk 'West'
+    turn 'South'
+    walk 'South'
+    turn 'East'
+    walk 'East'
+    turn 'South'
+    walk 'South'
+    turn 'West'
+    walk 'West'
+    turn 'South'
+    walk 'South'
+    @pushlist 'ljCommand' 'doChop'
+    @pushlist 'ljColumn' 1
+  endif
+  while @inlist 'ljCommand' 'doChop'
+    @clearjournal
+    useobject 'axe'
+    waitfortarget 1500
+    target! 'self'
+    pause 1000
+    if @injournal 'any harvest' 'system'
+      poplist! 'ljCommand' 'doChop'
+    else
+      pause 4000
+    endif
+    if not @findobject 'axe'
+      if @findtype 0xf44 'any' 'backpack'
+        equipitem 'found' 2
+        setalias 'axe' 'found'
+      else
+        headmsg 'Lumberjacking Script Finished: No Hatchets' 55
+        stop
+      endif
+    endif
+  endwhile
+  if @inlist 'ljCommand' 'moveRight'
+    if list 'ljRow' == 5
+      poplist! 'ljCommand' 'moveRight'
+      @pushlist 'ljCommand' 'moveNorth'
+      @pushlist 'ljCommand' 'preLeft'
+      @clearlist 'ljRow'
+    endif
+  elseif @inlist 'ljCommand' 'moveNorth'
+    poplist! 'ljCommand' 'moveNorth'
+    if @inlist 'ljCommand' 'preLeft'
+      poplist! 'ljCommand' 'preLeft'
+      @pushlist 'ljCommand' 'moveLeft'
+    elseif @inlist 'ljCommand' 'preRight'
+      poplist! 'ljCommand' 'preRight'
+      @pushlist 'ljCommand' 'moveRight'
+    endif
+  elseif @inlist 'ljCommand' 'moveLeft'
+    if list 'ljRow' == 5
+      @poplist! 'ljCommand' 'moveLeft'
+      @pushlist 'ljCommand' 'moveNorth'
+      @pushlist 'ljCommand' 'preRight'
+      @clearlist 'ljRow'
+    endif
+  elseif @inlist 'ljCommand' 'moveSouth'
+    poplist! 'ljCommand' 'moveSouth'
+    if @inlist 'ljCommand' 'preLeft'
+      poplist! 'ljCommand' 'preLeft'
+      @pushlist 'ljCommand' 'moveLeft'
+      @clearlist 'ljRow'
+    elseif @inlist 'ljCommand' 'preRight'
+      poplist! 'ljCommand' 'preRight'
+      @pushlist 'ljCommand' 'moveRight'
+      @clearlist 'ljRow'
+    endif
+  endif
+  if list 'ljColumn' == 5
+    // Change the 5 above this line if you want it the script to go more north.
+    headmsg 'Lumberjacking Script Finished Successfully' 55
+    stop
+  endif
+endwhile

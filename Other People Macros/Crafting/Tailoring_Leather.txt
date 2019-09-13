@@ -1,0 +1,158 @@
+/////////////////////////////////////////////
+// UO Steam Tailoring Macro
+// for Outlands
+//
+// Steps for using:
+// 1) Have an exceptional sort bag
+// 2) Have the leather type you want to use
+// 3) Have the tailoring gump pre-selected for the leather type
+// 4) Attempt to make one of the items you want so it sets Make Last
+// 5) Make sure you have sewing kits for crafting
+// 6) Make sure you have scissors for recycling
+//    (Yes I know you can recycle in gump, but this is simpler)
+//
+//
+// Version 1.0
+// -----------
+// * creates leather item (your choice), places in exceptional bag
+//   else cuts it up and tries again.
+//
+/////////////////////////////////////////////
+
+@unsetalias 'SaveBag'
+promptalias 'Savebag'
+
+@useobject 'SaveBag'
+pause 300
+
+//
+// Create, clear and insert list
+//
+if not @listexists 'Items' 
+  createlist 'Items' 
+endif 
+@clearlist 'Items'
+//
+// Bone
+//
+@pushlist 'Items' 0x1454 //Bone Tunic 
+@pushlist 'Items' 0x1457 //Bone Legs
+@pushlist 'Items' 0x1453 //Bone Arms 
+@pushlist 'Items' 0x1451 //Bone Helm
+@pushlist 'Items' 0x1455 //Bone Gloves
+@pushlist 'Items' 0x1455 //Bone Gloves
+//
+// Studded 
+//
+@pushlist 'Items' 0x13e1 //Studded Leggings 
+@pushlist 'Items' 0x13e2 //Studded Tunic 
+@pushlist 'Items' 0x13dd //Studded Gloves 
+@pushlist 'Items' 0x13d6 //Studded Gorget/Bone Gorget
+@pushlist 'Items' 0x13d4 //Studded Sleeves 
+//
+// Leather 
+//
+@pushlist 'Items' 0x13ce //Leather Gloves 
+@pushlist 'Items' 0x13c5 //Leather Sleeves 
+@pushlist 'Items' 0x13d3 //Leather Tunic 
+@pushlist 'Items' 0x13d2 //Leather Pants 
+@pushlist 'Items' 0x13c7 //Leather Gorget 
+@pushlist 'Items' 0x1dba //Leather Cap 
+//
+// Female Armor 
+//
+@pushlist 'Items' 0x1c0d //Female Studded Bustier 
+@pushlist 'Items' 0x1c01 //Female Leather Shorts 
+@pushlist 'Items' 0x1c02 //Female Studded Armor 
+@pushlist 'Items' 0x1c09 //Female Studded Skirt/Leather Skirt/Bone Skirt
+@pushlist 'Items' 0x1c07 //Female Leather Armor 
+@pushlist 'Items' 0x1c0b //Female Leather Bustier 
+
+//
+// Hide
+//
+if not hidden 'self' and skill 'hiding' >= 50
+  useskill 'hiding'
+endif
+
+// 
+// Scissor check
+//
+if counttype 0xf9f 'any' 'backpack' < 1
+    headmsg 'I have no scissors!' '88'
+    stop
+endif
+
+///
+/// while we have leather
+///
+while counttype 0x1081 'any' 'backpack' >= 15
+
+    @clearjournal
+
+    //
+    // Check weight
+    //
+    if diffweight < 10
+        headmsg 'I am too heavy, please unload me' '88'
+        pause 5000
+        continue
+    endif
+
+    //
+    // Craft (find and use sewing kit)
+    //
+    if @findtype 0xf9d 'any' 'backpack'  
+        //
+        // Use 3x = sometimes server doesnt respond
+        //
+        useobject 'found'
+        pause 100
+        useobject 'found'
+        pause 100
+        useobject 'found'
+        pause 100
+        //
+        // Craft gump 
+        //
+        waitforgump 0x38920abd 5000
+        //
+        // Make last
+        // 
+        replygump 0x38920abd 7
+        pause 2000
+    else
+        headmsg 'I have no sewing kits, please give me some' '88'
+        pause 5000
+        continue
+    endif
+
+    //
+    // Sort results
+    //
+    for 0 to 'Items'
+        if @findtype Items[] 'any' 'backpack' 1 2
+            @clickobject 'found'
+            pause 500
+            if @injournal 'exceptional' 'system'
+                moveitem 'found' 'Savebag'
+                headmsg '*Exceptional*' 91
+                @ignoreobject 'found'
+            else 
+                @usetype '0xf9f''
+                waitfortarget 5000
+                target! 'found'
+                pause 1000
+            endif
+        endif
+    endfor
+
+endwhile
+
+// 
+// Leather check
+//
+if counttype 0x1081 'any' 'backpack' < 15
+    headmsg 'I have no leather!' '88'
+    stop
+endif

@@ -1,0 +1,208 @@
+/////////////////////////////////////////////
+// UO Steam Tailoring Macro
+// for Outlands
+//
+// Stocks a shelf with _sets_ of exceptional leather items. Will loop itself 
+// making as many items as long as you have leather and sewing kits. Non-exceptional
+// are salvaged automatically.
+//
+// Steps for using:
+// ----------------
+// 1) Have a shelf nearby
+// 2) Modify the code for what you want to make.
+// 3) Have leather in your backpack and crafting gump selected for its type
+// 4) Make sure you have sewing kits in pack
+// 5) Make sure you have scissors for recycling
+//
+// Version 1.0
+// -----------
+// * Initial version
+//
+// Version 2.0
+// -----------
+// * Lol OK, now it works. Tried to make without a shelf and didn't understand
+//   how shelves worked. Tested now with an actual shelf.
+//
+// Remember, if you change shelves, clear active objects first.
+//
+/////////////////////////////////////////////
+
+@removelist 'make'
+@createlist 'make'
+
+// 
+// Add or comment out items to make
+// This comprises your 'set'
+// MODIFY START
+// ----------->
+
+@pushlist! 'make' 'Leather Gloves'
+@pushlist! 'make' 'Leather Sleeves'
+@pushlist! 'make' 'Leather Tunic'
+@pushlist! 'make' 'Leather Pants'
+@pushlist! 'make' 'Leather Gorget'
+//@pushlist! 'make' 'Leather Cap'
+
+// <-----------
+// MODIFY END
+//
+
+//
+// Open backpack
+//
+@useobject 'backpack'
+pause 1000
+
+//
+// Set alias'
+//
+if not findalias 'Shelf'
+    sysmsg "Select storage shelf"
+    promptalias 'Shelf'
+endif
+
+//
+// Create, clear and insert list
+// (don't modify this)
+//
+@removelist 'typeids'
+@createlist 'typeids'
+@pushlist 'typeids' 0x13ce //Leather Gloves 
+@pushlist 'typeids' 0x13c5 //Leather Sleeves 
+@pushlist 'typeids' 0x13d3 //Leather Tunic 
+@pushlist 'typeids' 0x13d2 //Leather Pants 
+@pushlist 'typeids' 0x13c7 //Leather Gorget 
+@pushlist 'typeids' 0x1dba //Leather Cap 
+
+//
+// Pack check
+//
+for 0 to 'typeids'
+    if @findtype 'typeids[]' 'any' 'backpack'
+        headmsg "Cannot continue" 55
+        sysmsg "Please remove all craftable items from pack before starting" 33
+        stop
+    endif
+endfor
+
+// 
+// Scissor check
+//
+if counttype 0xf9f 'any' 'backpack' < 1
+    headmsg 'I have no scissors!' '88'
+    stop
+endif
+
+//
+// Check weight
+//
+if diffweight < 10
+    headmsg 'I am too heavy, please unload me' '88'
+    pause 5000
+    stop
+endif
+
+while list 'make' > 0
+
+    //
+    // Check leather
+    //
+    if counttype 0x1081 'any' 'backpack' < 15 
+        headmsg 'I have no leather!' 66
+        stop
+    endif
+
+    //
+    // Check sewing kits
+    //
+    if not @findtype 0xf9d 'any' 'backpack'  
+        headmsg 'I have no sewing kits!' 66
+        stop
+    endif
+
+    //
+    // Use 3x = sometimes server doesnt respond
+    //
+    useobject 'found'
+    pause 100
+    useobject 'found'
+    pause 100
+    useobject 'found'
+    pause 100
+
+    headmsg make[0] 72
+
+    //
+    // Craft gump 
+    //
+    waitforgump 0x38920abd 5000
+
+    //
+    // Have to convert hex to decimal for list checks
+    //
+    if @inlist 'make' 'Leather Gloves'
+        replygump 0x38920abd 101
+        waitforgump 0x38920abd 15000
+        replygump 0x38920abd 201
+    elseif @inlist 'make' 'Leather Sleeves'
+        replygump 0x38920abd 101
+        waitforgump 0x38920abd 15000
+        replygump 0x38920abd 203
+    elseif @inlist 'make' 'Leather Tunic'
+        replygump 0x38920abd 101
+        waitforgump 0x38920abd 15000
+        replygump 0x38920abd 207
+    elseif @inlist 'make' 'Leather Pants'
+        headmsg "Leather Pants" 55
+        replygump 0x38920abd 101
+        waitforgump 0x38920abd 15000
+        replygump 0x38920abd 204
+    elseif @inlist 'make' 'Leather Gorget'
+        replygump 0x38920abd 101
+        waitforgump 0x38920abd 15000
+        replygump 0x38920abd 200
+    elseif @inlist 'make' 'Leather Cap'
+        replygump 0x38920abd 101
+        waitforgump 0x38920abd 15000
+        replygump 0x38920abd 202
+    endif
+
+    //
+    // Craft
+    //
+    pause 3000
+
+    //
+    // Check, shelf, or cut
+    //
+
+    for 0 to 'typeids'
+        @clearjournal
+        if @findtype 'typeids[]' 'any' 'backpack'
+            @clickobject 'found'
+            pause 500
+            if @injournal 'exceptional' 'system'
+                //
+                // Shelf it
+                //
+                headmsg '*Exceptional*' 55
+                waitforcontext 'Shelf' 0 5000
+                waitfortarget 5000
+                target! 'self'
+                pause 500
+                // 
+                // Pop it
+                //
+                poplist 'make' 'make[0]'
+                break
+            else 
+                @usetype '0xf9f
+                waitfortarget 5000
+                target! 'found'
+                pause 1000
+            endif
+        endif
+    endfor
+endwhile
+
+replay

@@ -1,0 +1,77 @@
+/////////////////////////////////////////////
+// UO Steam Spell Combat Macro
+// for Outlands
+// by Jewele
+// 
+// This is a multi-purpose macro for casting Greater Heal that will 
+// adapt to your individual loadouts in PvP. If you are injured,
+// it just heals you. If not, it assumes you are casting and holding
+// for a friend.
+//
+// Dress agents are *by far* the most reliable way to get weapons
+// and shields back in your hand. Scripts can record items in hands
+// but they can be interrupted, sometimes leaving you unequipped.
+//
+// Highlights:
+// -----------
+// * Casts Greater Heal
+// * If you are hurt, you target yourself 
+// * If you are not hurt, holds spell
+// * If you are poisoned, and you have a cure pot, drinks it
+// * If you are poisoned, and you do not have a cure pot, cures you instead
+//
+// How to use?
+// -----------
+// 1) Record a dress agent named 'default'
+// 2) Run script
+//
+// Version 1.0
+// -----------
+// First release
+//
+// UOSTEAM COPY-PASTE BELOW THIS LINE
+/////////////////////////////////////////////
+
+@cleartargetqueue
+@canceltarget
+pause 100
+
+// Cures
+if poisoned 'self'
+    if findtype! 0xf07 0 'backpack'
+        headmsg "[Cure Potion]" 194
+        useobject! 'found'
+    else
+        @canceltarget
+        headmsg '[Cure]' 194
+        autotargetself
+        cast 'Cure'
+    endif
+endif
+
+//
+// Cast Heal
+//
+// Autotargetself is a split second faster than
+// waitfortarget/targetself sequence. Therefore, 
+// when healing self, use the autotarget feature.
+// It does require a small pause afterwards.
+//
+if diffhits > 20
+    cast 'Greater Heal'
+    autotargetself
+    pause 2000
+else
+    cast 'Greater Heal'
+    waitfortarget 5000
+    while targetexists
+        pause 100
+    endwhile
+endif
+
+//
+// put equip back
+//
+dress 'default'
+while dressing
+endwhile

@@ -1,0 +1,243 @@
+/////////////////////////////////////////////
+// UO Steam Pet Healing macro
+// for Outlands
+// by Jewele
+// 
+// Heals/Cures 1 to 5 pets, your choice. Select your pets
+// once, and run macro again every time you need to heal 
+// them. 
+//
+// How to use?
+// -----------
+// 1) Run script first time
+// 2) Select up to 5 pets
+// 3) Re-run every time you need to heal your pets
+//
+// Version 1.0
+// -----------
+// First release! yay! Good macros go through up to 10 
+// revisions before they are perfect. Help me out - feedback!
+//
+// Version 1.1
+// -----------
+// Fixed an issue with pet rez near aggro feature.
+//
+// Version 1.2
+// -----------
+// Moved aggro detection into code which only executes if pet is dead.
+// Was causing mobs to flash around you while healing pets.
+//
+// Version 1.3
+// -----------
+// Removed opening backpack each time script ran, it was closing open bags.
+// Reduced aggro range detection for rezzing pets, it was picking up mobs
+//    between floors in Aegis keep.
+//
+// Version 1.4
+// -----------
+// Changed messages to a green color
+// Re-bandaging will not reset existing bandage attempts, but you will get a message
+// Fixed bug where script would stop if you ran low on bandages
+// Fixed bug where a pet would be rezzed if near aggro if selected first
+//
+// Version 1.5
+// -----------
+// Added message when player finishes selecting pets
+//
+// Those important NOTES
+// ---------------------
+// * Most injured pet close to you will be healed
+// * If you are outside bandage range 2 you will be warned to get closer
+// * Poisoned pets within range 12 will immediately receive a Cure spell
+// * To avoid Cure spam, Cure results are not checked and only 1 Cure is used.
+// * Casting Cure while items are equipped will re-equip them.
+// * Dead pets will not be rezzed if aggro is nearby, instead
+//      the macro will switch to healthy pets for healing.
+// * Macro will loop itself until you stop it or run another macro
+// * What if an unbonded pet dies? Macro will be fine.
+// * What if I had 5 pets, but I stabled 3 of them and only have 2? Works fine.
+// * How do I change or reset pets? You can hit [Active Objects]-[Clear Active Objects], 
+//      or just remove the 'pets' list.
+// * It says I have no bandages!? Open pack once, or open bag within pack that has bandages.
+// 
+// UOSTEAM COPY-PASTE BELOW THIS LINE
+/////////////////////////////////////////////
+
+@cleartargetqueue
+//
+// First time use will prompt user for pets
+//
+if not listexists 'pets'
+    sysmsg "Pet Healing Macro - Version 1.5" 88
+    sysmsg "When prompted select one pet after another" 88
+    sysmsg "When all pets are selected, press ESC" 88
+    @createlist 'pets'
+    //
+    // Maximum 5
+    //
+    for 5
+        sysmsg "Select next pet" 88
+        promptalias 'pet'
+        if @findobject 'pet'
+            pushlist 'pets' 'pet'
+            sysmsg "Your pet has been saved, press ESC if you have no more pets" 44
+        else
+            break
+        endif
+    endfor
+    sysmsg "Thank you, pets saved, script is ready" 44
+endif
+
+//
+// No bandage warning
+//
+if @counttype '0xe21' 'any' 'backpack' == 0
+    sysmsg "No bandages!" 38
+    stop
+endif
+
+//
+// Low bandage warning
+//
+if @counttype '0xe21' 'any' 'backpack' < 20
+    sysmsg "Low bandages!" 38
+endif
+
+//
+// save equip states
+// 
+if @findlayer 'self' 2
+    @setalias 'lhand' 'found'
+endif
+if @findlayer 'self' 1
+    @setalias 'rhand' 'found'
+endif
+
+//
+// temporary list 
+//
+@removelist 'heal'
+@createlist 'heal'
+
+//
+// Check all pets in spell range for a cure
+//
+for 0 to 'pets'
+    if poisoned pets[] and @inrange pets[] 15 
+        if mana 'self' > 6
+            headmsg "+Curing+" 172
+            cast 'Cure'
+            waitfortarget 5000
+            target! pets[]
+            //
+            // Reequip
+            // 
+            if not @findlayer 'self' 1
+                equipitem 'rhand' 1
+            endif
+            if not @findlayer 'self' 2
+                equipitem 'lhand' 2
+            endif
+        endif
+    endif
+endfor
+
+@clearlist 'heal'
+
+//
+// Find most wounded pet near you
+//
+for 0 to 'pets'
+    
+    if @inrange pets[] 15
+
+        //
+        // Dead pets cannot be resurrected near aggro
+        //
+        if hits pets[] == 0
+            @unsetalias 'enemy'
+            @getenemy 'murderer' 'enemy' 'criminal' 'gray'
+            if @inrange 'enemy' 6
+                sysmsg "Dead pets cannot resurrected near aggro" 172
+                continue
+            endif
+        endif
+
+        // 
+        // Check empty heal list
+        //
+        if list 'heal' == 0
+            @pushlist 'heal' pets[]
+            continue
+        endif
+
+        //
+        // Compare next pet to previous
+        // 
+        if diffhits pets[] > diffhits heal[0]
+            @clearlist 'heal'
+            @pushlist 'heal' pets[]
+        endif
+    endif
+endfor
+
+//
+// Warn user about bandge continuation
+//
+if @timerexists 'vet' and @timer 'vet' < 8000
+    sysmsg "Waiting for previous bandage to finish" 172
+endif
+
+//
+// Heal pet
+//
+if not @timerexists 'vet'
+
+    //
+    // Check most damaged pet in range for heal
+    //
+    if not @inrange heal[0] 2 and @diffhits heal[0] > 0
+       headmsg "(closer)" 172
+       pause 2000
+       replay
+    endif
+
+    //
+    //  Heal pet
+    //
+    if @diffhits heal[0] > 0 
+        headmsg "+Healing+" 172
+        autotargetobject heal[0]
+        usetype 0xe21 'any' 'backpack'
+        @clearjournal
+        settimer 'vet' 0
+    endif
+
+endif
+
+//
+// Wait for bandage finish
+//
+if @timerexists 'vet'
+    while timer 'vet' < 8000
+        if @injournal 'heal' 'system'
+            break
+        endif
+        if @injournal 'cure' 'system'
+            break
+        endif
+        if @injournal 'finish' 'system'
+            break
+        endif
+        if @injournal 'not damaged' 'system'
+            break
+        endif
+        if @injournal 'resurrect' 'system'
+            break
+        endif
+    endwhile
+    @removetimer 'vet'
+endif
+
+pause 1000
+replay

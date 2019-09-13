@@ -1,0 +1,117 @@
+if not @findobject 'mats'
+  headmsg 'Target Scrolls and Cloth Container' 57
+  promptalias 'mats'
+endif
+if not @findtype 0xf9f 'any' 'backpack'
+  headmsg 'Get some fuckin scissors' 33
+  stop
+endif
+if not @findobject 'Spellbook'
+  headmsg 'Select Your Spellbook' 21
+  promptalias 'Spellbook'
+endif
+ignoreobject 'Spellbook'
+if not listexists 'fonsRecycler'
+  createlist 'fonsRecycler'
+endif
+if list 'fonsRecycler' == 0
+  @pushlist 'fonsRecycler' 0x1f50
+  @pushlist 'fonsRecycler' 0x1f56
+  @pushlist 'fonsRecycler' 0xefa
+endif
+if not listexists 'fonsHats'
+  createlist 'fonsHats'
+endif
+if list 'fonsHats' == 0
+  @pushlist 'fonsHats' 0x1718
+endif
+if not @findtype 0xfc0 'any' 'backpack'
+  headmsg 'No More Pens' 44
+  stop
+endif
+if not listexists 'mats'
+  @createlist 'mats'
+endif
+if list 'mats' == 0
+  @pushlist 'mats' 0x1766
+  @pushlist 'mats' 0xef3
+endif
+if skill 'inscription' < 60
+  usetype 0xfc0
+  waitforgump 0x38920abd 15000
+  replygump 0x38920abd 107
+  waitforgump 0x38920abd 15000
+  replygump 0x38920abd 203
+  waitforgump 0x38920abd 15000
+  waitforgump 0x38920abd 15000
+elseif skill 'inscription' < 80
+  usetype 0xfc0
+  waitforgump 0x38920abd 15000
+  replygump 0x38920abd 108
+  waitforgump 0x38920abd 15000
+  replygump 0x38920abd 201
+  waitforgump 0x38920abd 15000
+  waitforgump 0x38920abd 15000
+elseif skill 'inscription' < 100
+  usetype 0xfc0
+  waitforgump 0x38920abd 2000
+  replygump 0x38920abd 100
+  waitforgump 0x38920abd 2000
+  replygump 0x38920abd 200
+  waitforgump 0x38920abd 2000
+  waitforgump 0x38920abd 2000
+elseif skill 'inscription' < 120
+  usetype 0xfc0
+  waitforgump 0x38920abd 2000
+  replygump 0x38920abd 101
+  waitforgump 0x38920abd 2000
+  replygump 0x38920abd 200
+  waitforgump 0x38920abd 2000
+  waitforgump 0x38920abd 2000
+else
+  headmsg 'I am now a Legendary Scribe!'
+  stop
+endif
+for 0 to 'fonsRecycler'
+  while @findtype fonsRecycler[] 'any' 'backpack'
+    usetype 0xfc0
+    waitforgump 0x38920abd 2000
+    replygump 0x38920abd 3
+    waitfortarget 15000
+    @target! 'found'
+    waitforgump 0x38920abd 2000
+    pause 100
+  endwhile
+endfor
+for 0 to 'fonsHats'
+  while @findtype fonsHats[] 'any' 'backpack'
+    usetype 0xf9f
+    waitfortarget 2000
+    @target! 'found'
+    pause 750
+  endwhile
+endfor
+if skill 'inscription' >= 100
+  for 0 to 'mats'
+    if not @findtype mats[] '0' 'backpack'
+      useobject 'mats'
+      pause 700
+      movetype mats[] 'mats''backpack' 1 0 0 0 100
+      pause 1000
+    endif
+    while @findtype mats[] '0' 'backpack' and @amount 'found' <= 20
+      useobject 'mats'
+      pause 700
+      movetype mats[] 'mats''backpack' 1 0 0 0 100
+      pause 1000
+    endwhile
+  endfor
+else
+  if @findtype 0xef3 '0' 'backpack' and @amount 'found' <= 20
+    useobject 'mats'
+    pause 700
+    movetype 0xef3 'mats''backpack' 1 0 0 0 100
+    pause 1000
+  endif
+endif
+replay

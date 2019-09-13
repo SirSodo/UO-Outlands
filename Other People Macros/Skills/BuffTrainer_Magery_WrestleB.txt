@@ -1,0 +1,19 @@
+while not dead
+    
+    //
+    // War mode has to be toggled to get dummies out of attacking
+    //
+    warmode 'on'
+    warmode 'off'
+
+    //
+    // You should not be hitting dummies with weapons which do
+    // a lot of damage
+    //
+    if diffhits > 10
+      bandageself
+      pause 20000
+    endif
+
+    pause 1000
+endwhile

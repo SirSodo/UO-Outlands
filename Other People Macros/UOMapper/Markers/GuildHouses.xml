@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Pack Name="Guild Houses" Revision="0">
+	<Marker Name="Axiom's House" X="1330" Y="2037" Icon="GH" Facet="0"/>
+	<Marker Name="Brad's House" X="2918" Y="560" Icon="GH" Facet="0"/>
+	<Marker Name="Brad's House" X="748" Y="3185" Icon="GH" Facet="0"/>
+	<Marker Name="Cambria Vendor" X="1677" Y="3153" Icon="GH" Facet="0"/>
+	<Marker Name="Chios House" X="2991" Y="503" Icon="GH" Facet="0"/>
+	<Marker Name="Chios House" X="1718" Y="2286" Icon="GH" Facet="0"/>
+	<Marker Name="Creepy House" X="866" Y="3038" Icon="GHS" Facet="0"/>
+	<Marker Name="Creepy House" X="1749" Y="1251" Icon="GHS" Facet="0"/>
+	<Marker Name="Creepy House" X="2440" Y="3341" Icon="GHS" Facet="0"/>
+	<Marker Name="Dravek's House" X="1159" Y="1552" Icon="GHS" Facet="0"/>
+	<Marker Name="Flindach's House" X="1217" Y="1420" Icon="GH" Facet="0"/>
+	<Marker Name="Fuschinos's House" X="1362" Y="2356" Icon="GH" Facet="0"/>
+	<Marker Name="Goldy's House" X="1476" Y="1471" Icon="GH" Facet="0"/>
+	<Marker Name="Guild House" X="1802" Y="695" Icon="MGH" Facet="0"/>
+	<Marker Name="Hanebu's House" X="2161" Y="931" Icon="GH" Facet="0"/>
+	<Marker Name="Harald's House" X="1838" Y="838" Icon="GHS" Facet="0"/>
+	<Marker Name="Jase's House" X="1783" Y="711" Icon="GH" Facet="0"/>
+	<Marker Name="Jewele's House" X="1236" Y="2863" Icon="GHS" Facet="0"/>
+	<Marker Name="Kazuma's House" X="1726" Y="1008" Icon="GH" Facet="0"/>
+	<Marker Name="Koldes' House" X="2168" Y="3173" Icon="GH" Facet="0"/>
+	<Marker Name="Kushaholix' House" X="3304" Y="3704" Icon="GH" Facet="0"/>
+	<Marker Name="Mary's House" X="1755" Y="745" Icon="GH" Facet="0"/>
+	<Marker Name="Meataball's House" X="1813" Y="802" Icon="GH" Facet="0"/>
+	<Marker Name="Meataball's House" X="1127" Y="1139" Icon="GH" Facet="0"/>
+	<Marker Name="Memphist's House" X="1540" Y="1450" Icon="GH" Facet="0"/>
+	<Marker Name="Mexi's House" X="2904" Y="589" Icon="GHS" Facet="0"/>
+	<Marker Name="Mugen" X="2420" Y="3376" Icon="GH" Facet="0"/>
+	<Marker Name="Nekronos' House" X="2627" Y="485" Icon="GH" Facet="0"/>
+	<Marker Name="Neos House" X="1368" Y="478" Icon="GHS" Facet="0"/>
+	<Marker Name="PVPeter's House" X="752" Y="1206" Icon="GH" Facet="0"/>
+	<Marker Name="Silverback's House" X="3340" Y="3745" Icon="GH" Facet="0"/>
+	<Marker Name="Silverback's House" X="2242" Y="3324" Icon="GHS" Facet="0"/>
+	<Marker Name="SilverWolfe's House" X="1752" Y="731" Icon="GH" Facet="0"/>
+	<Marker Name="Sir Arch' House" X="731" Y="1194" Icon="GH" Facet="0"/>
+	<Marker Name="Slick's" X="880" Y="3045" Icon="GH" Facet="0"/>
+	<Marker Name="SnugglePuss Houses" X="1282" Y="2266" Icon="GH" Facet="0"/>
+	<Marker Name="Terran Gate" X="880" Y="1564" Icon="GH" Facet="0"/>
+	<Marker Name="Texmex/Precox House" X="1010" Y="689" Icon="GH" Facet="0"/>
+	<Marker Name="Tant's House" X="951" Y="2855" Icon="GHS" Facet="0"/>
+	<Marker Name="Toots' House" X="2170" Y="488" Icon="GH" Facet="0"/>
+	<Marker Name="Troy's House" X="3304" Y="3729" Icon="GH" Facet="0"/>
+	<Marker Name="Yoink's House" X="285" Y="1795" Icon="GH" Facet="0"/>
+</Pack>

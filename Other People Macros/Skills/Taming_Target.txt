@@ -1,0 +1,53 @@
+/////////////////////////////////////////////
+// UO Steam Taming Macro
+// for Outlands
+//
+// This is a good script if you know you want to target a specific creature to tame, and
+// loop until it sticks. It will not release it for you - you must release manually.
+//
+// v1.0
+// ----
+// * Initial version
+//
+/////////////////////////////////////////////
+headmsg "Select creature to tame" 55
+promptalias 'tobetamed'
+if @findobject 'tobetamed'
+  while name 'tobetamed' != 'Ozy'
+  	@setskill 'animal taming' 'up'
+    autotargetobject 'tobetamed'
+    useskill 'animal taming'
+    pause 13000
+    @rename 'tobetamed' 'Ozy'
+    if not @inrange 'tobetamed' 1
+      if @x 'tobetamed' > x 'self' and @y 'tobetamed' > y 'self'
+        walk 'Southeast'
+      elseif @x 'tobetamed' < x 'self' and @y 'tobetamed' > y 'self'
+        walk 'Southwest'
+      elseif @x 'tobetamed' > x 'self' and @y 'tobetamed' < y 'self'
+        walk 'Northeast'
+      elseif @x 'tobetamed' < x 'self' and @y 'tobetamed' < y 'self'
+        walk 'Northwest'
+      elseif @x 'tobetamed' > x 'self' and @y 'tobetamed' == y 'self'
+        walk 'East'
+      elseif @x 'tobetamed' < x 'self' and @y 'tobetamed' == y 'self'
+        walk 'West'
+      elseif @x 'tobetamed' == x 'self' and @y 'tobetamed' > y 'self'
+        walk 'South'
+      elseif @x 'tobetamed' == x 'self' and @y 'tobetamed' < y 'self'
+        walk 'North'
+      endif
+    endif
+    //
+    // Player left tame attempt
+    //
+    if not @inrange 'tobetamed' 3
+      headmsg "you moved too far" 44
+      @ignoreobject 'tobetamed'
+      @unsetalias 'tobetamed'
+      replay
+    endif
+  endwhile
+  @ignoreobject 'tobetamed'
+  @unsetalias 'tobetamed'
+endif

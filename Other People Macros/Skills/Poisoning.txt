@@ -1,0 +1,166 @@
+/////////////////////////////////////////////
+// UO Steam Poisoning Trainer
+// for Outlands
+// by Jewele
+//
+// How to use?
+// -----------
+// 1) Start at bank
+// 2) Modify script for potion you want to use
+// 3) Have 1 kryss in your pack
+// 4) Have 1 bag in back with your poison kegs.
+//    Use kegs appropriate to your skill!
+// 5) Have 1 Greater Cure keg in bank
+// 5) Have some bottles in your pack (5+)
+// 6) Run script
+//
+// Version 1.0
+// -----------
+// First release! yay!
+//
+// Version 2.0
+// -----------
+// Added health checks and heals
+//
+// UOSTEAM COPY-PASTE BELOW THIS LINE
+/////////////////////////////////////////////
+
+sysmsg "Poisoning Script" 88
+sysmsg "Version 1.1" 88
+//
+// Open backpack
+//
+@useobject 'backpack'
+pause 1000
+//
+// Set alias'
+//
+if not findalias 'kegbag'
+    sysmsg "Select bank bag with poison kegs, empty kegs will be placed here"
+    promptalias 'kegbag'
+endif
+if not findalias 'cures'
+    sysmsg "Select Cure keg in bank"
+    promptalias 'cures'
+endif
+//
+// Open bank
+// 
+msg "bank"
+pause 1000
+msg "bank"
+pause 1000
+//
+// Check for empty bottle if no poisons
+//
+if not @findtype 0xf0a 'any' 'backpack'
+    if not @findtype 0xf0e 0 'backpack'
+        headmsg "I need an empty bottle" 91
+        stop
+    endif
+endif
+@clearjournal
+//
+// Main loop
+//
+while not dead
+    //
+    // Check for a poison keg or transfer one
+    //
+    if not @findtype 0x1940 363 'backpack'
+        movetype 0x1940 'kegbag' 'backpack' 0 0 0 363 1
+        pause 2000
+    endif
+    //
+    // Verify keg. Server save on restock may occur
+    // so throw message, wait, and start again
+    //
+    if not @findtype 0x1940 363 'backpack'
+        headmsg "I need a poison keg to continue!" 91
+        pause 5000
+        continue
+    endif
+    //
+    // Move empty kegs back to bank
+    //
+    if @findtype 0x1940 0 'backpack'
+        movetype 0x1940 'backpack' 'kegbag' 0 0 0 0 1
+        pause 2000
+    endif
+    //
+    // Use keg to fill poison bottle
+    //
+    usetype 0x1940 363 'backpack'
+    pause 1000
+    //
+    // Check poison
+    //
+    if not @findtype 0xf0a 'any' 'backpack'
+        headmsg "I need a poison potion!" 91
+        pause 5000
+        continue
+    endif
+    //
+    // Check cures
+    //
+    settimer 'restock' 0
+    while @counttype 0xf07 'any' 'backpack' < 3 and timer 'restock' < 10000
+        @useobject 'cures'
+        pause 2000
+    endwhile
+    //
+    // Verify cures
+    //
+    if @counttype 0xf07 'any' 'backpack' < 3
+        headmsg "I need more Cure potions!" 91
+        pause 5000
+        continue
+    endif   
+    @clearjournal    
+    //
+    // Poison
+    //
+    @findtype 0xf0a 'any' 'backpack'
+    useskill 'Poisoning'
+    waitfortarget 5000
+    target! 'found'
+    //
+    // kryss
+    //
+    @findtype 0x1401 'any' 'backpack'
+    waitfortarget 5000
+    target! 'found'
+    pause 2000
+    //
+    // Poisoned?
+    //
+    while poisoned
+        headmsg 'Darnit!' 55
+        usetype 0xf07 'any' 'backpack'
+        pause 1000
+        if not findtype 0xf07 'any' 'backpack'
+            break
+        endif
+    endwhile
+
+    //
+    // Heal
+    //
+    while diffhits > 20
+        if skill 'magery' > 60
+            bigheal 'self'
+            pause 2000
+        endif
+        if skill 'healing' > 60
+            bandageself!
+            pause 20000
+        endif
+        pause 5000
+    endwhile
+
+    //
+    // Skill cooldown
+    //
+    pause 2000
+    msg 'guards'
+endwhile

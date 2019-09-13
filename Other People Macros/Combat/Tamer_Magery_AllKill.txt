@@ -1,0 +1,29 @@
+/////////////////////////////////////////////
+// UO Steam Tamer All Kill Macro
+// for Outlands
+//
+// Uses shepherd's crook if you have one,
+// directs pets to kill.
+//
+// Version History:
+// * 1.0 initial release
+//
+/////////////////////////////////////////////
+
+@clearjournal
+@canceltarget
+@cleartargetqueue
+sysmsg "Select target"
+promptalias 'target'
+msg "all kill"
+waitfortarget 5000
+target! 'target'
+pause 500
+//
+// Herd
+//
+if findtype '0xe81' 'any' 'backpack'
+  useobject 'found'
+  waitfortarget 5000
+  target 'target'
+endif

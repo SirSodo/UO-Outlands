@@ -1,0 +1,46 @@
+/////////////////////////////////////////////
+// UO Steam Taming Macro
+// for Outlands
+//
+// This is a good script if you are using a tank pet
+// while you tame.
+//
+// v1.0
+// ----
+// * Initial version
+//
+/////////////////////////////////////////////
+headmsg "Select creature to tame" 55
+promptalias 'tobetamed'
+headmsg "Select pet" 55
+promptalias 'pet'
+if @findobject 'tobetamed'
+  while name 'tobetamed' != 'Ozy'
+    @setskill 'animal taming' 'up'
+    useskill 'animal taming'
+    waitfortarget 5000
+    target! 'tobetamed'
+    if counttype '0xe21' 'any' 'backpack' == 0
+      sysmsg "No bandages!" 38
+      stop
+    endif
+    //
+    // heal
+    //
+    @usetype '0xe21' 'any' 'backpack'
+    waitfortarget 5000
+    target! 'pet'
+    pause 5000
+    //
+    // heal
+    //
+    @usetype '0xe21' 'any' 'backpack'
+    waitfortarget 5000
+    target! 'pet'
+    pause 5000
+    @rename 'tobetamed' 'Ozy'
+    pause 2500
+  endwhile
+  @ignoreobject 'tobetamed'
+  @unsetalias 'tobetamed'
+endif

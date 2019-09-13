@@ -1,0 +1,49 @@
+/////////////////////////////////////////////
+// UO Steam Tamer All Kill Macro
+// for Outlands
+//
+// Uses shepherd's crook if you have one.
+// If your Arms Lore is 80+, checks you are
+// making disarm attempts against your targets.
+// Puts you in combat mode if you are not.
+//
+// Version History:
+// * 1.0 initial release
+//
+// * 1.1 added journal reset
+//       added timer reset
+//
+// * 1.2 fixed issue with enabling Disarm
+//
+/////////////////////////////////////////////
+
+@clearjournal
+@canceltarget
+@cleartargetqueue
+sysmsg "Select target"
+promptalias 'target'
+msg "all kill"
+waitfortarget 5000
+target! 'target'
+pause 500
+attack! 'target'
+//
+// Herd
+//
+if findtype '0xe81' 'any' 'backpack'
+  useobject 'found'
+  waitfortarget 5000
+  target 'target'
+endif
+//
+// Disarm check
+//
+if skill 'Arms Lore' >= 80
+  setability 'disarm' 
+  pause 500
+  // oops turned it off
+  if @injournal 'refrain' 'system'
+    setability 'disarm'
+  endif
+  @clearjournal
+endif

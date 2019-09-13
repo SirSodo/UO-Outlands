@@ -1,0 +1,13 @@
+HOW TO USE THESE FILES
+by Jewele
+
+The UOMapper.zip contains the \Icons and \Markers files in it. You can download the .zip as an alternative to downloading the entire repo to get these files.
+
+1. Stop Ultima Mapper if it is running
+2. Extract the .zip into your UO Mapper resources folder, which will be :
+   C:\Users\<your name>\Documents\Ultima Mapper.
+3. Restart Ultima Mapper
+4. Select - Markers - you will now see the new marker options.
+5. Guild houses is "Guild Houses"
+
+That's it.

@@ -1,0 +1,95 @@
+/////////////////////////////////////////////
+// UO Steam Music/Peacemake/Discord
+// for Outlands
+//
+// * go to Prevalia zoo, run macro
+// * or choose a cliff or area where mobs cant get you
+//
+// Notes:
+// - A failed peacemake/discord requires 5 seconds to attempt again.
+// - A successful peacemake/discord requires 11 seconds to attempt again.
+// - No need to loop this, it loops itself
+/////////////////////////////////////////////
+
+//
+// Create instrument
+//
+removelist 'instrumentlist'
+@createlist 'instrumentlist'
+@pushlist 'instrumentlist' 0xeb1
+@pushlist 'instrumentlist' 0xeb2
+@pushlist 'instrumentlist' 0xeb3
+@pushlist 'instrumentlist' 0xe9c
+@pushlist 'instrumentlist' 0xe9d
+@pushlist 'instrumentlist' 0xe9e
+
+//
+// Select target
+//
+@unsetalias 'target'
+headmsg "Select target creature"
+promptalias 'target'
+
+//
+// Check selection
+//
+if not @findobject 'target'
+    headmsg 'Invalid target, cannot run script' '55' 'self'
+    stop    
+endif
+
+//
+// While alive
+//
+while hits > 0
+
+    //
+    // Select instrument
+    //
+    for 0 to 'instrumentlist'
+        @findtype instrumentlist[]
+        @setalias 'instrument' 'found'
+    endfor
+
+    //
+    // Check we have instrument
+    //
+    if not @findobject 'instrument' 'any' 'backpack'
+        headmsg 'No instruments!' '55' 'self'
+        stop    
+    endif
+
+    //
+    // Use instrument
+    //
+    @useobject 'instrument'
+
+    //
+    // Peacemake
+    //
+    if skill 'peacemaking' < 100
+        useskill 'peacemaking'
+        waitfortarget 2000
+        target! 'target'
+        pause 5100
+        if injournal 'pacifying' 'system'
+            pause 6000
+            @clearjournal
+        endif
+    endif
+
+    //
+    // Discord
+    //
+    if skill 'discordance' < 100
+        useskill 'discordance'
+        waitfortarget 2000
+        target! 'target'
+        pause 5100
+        if injournal 'disrupt' 'system'
+            pause 6000
+            @clearjournal
+        endif
+    endif
+
+endwhile

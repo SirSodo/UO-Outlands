@@ -1,0 +1,312 @@
+unsetalias 'tool'
+unsetalias 'stockpile'
+if not listexists 'doRecycle'
+  createlist 'doRecycle'
+endif
+if not listexists 'grabWoodFromStockpile'
+  createlist 'grabWoodFromStockpile'
+endif
+if not listexists 'grabToolFromStockpile'
+  createlist 'grabToolFromStockpile'
+endif
+if not listexists 'unpackCommodities'
+  createlist 'unpackCommodities'
+endif
+clearlist 'doRecycle'
+clearlist 'grabWoodFromStockpile'
+clearlist 'grabToolFromStockpile'
+clearlist 'unpackCommodities'
+//Uncomment the line below if you want the script
+//to auto unpack wood commodities as it needs them.
+//pushlist 'unpackCommodities' 1
+headmsg 'Select the chest that has the rest of your wood.'
+promptalias 'stockpile'
+pushlist 'doRecycle' 1
+// If we don't have any tools in the backpack, lets check the stockpile.
+if not @findtype 0x1034 'any' 'backpack'
+  if @findtype 0x1034 'any' 'stockpile'
+    for 5
+      @movetype 0x1034 'stockpile' 'backpack' 0 0 0 'any'
+      pause 1200
+    endfor
+  else
+    headmsg 'Script: Not enough tools in Stock Pile or Backpack.'
+    stop
+  endif
+endif
+if list 'doRecycle' > 0
+  clearlist 'doRecycle'
+  if @findtype 0x1034 'any' 'backpack'
+    // Grab the carpentry tool.
+    setalias 'tool' 'found'
+    if skill 'Carpentry' < 65
+      if @findtype 0x13b4 'any' 'backpack'
+        // If we have any clubs made.
+        useobject 'tool'
+        waitforgump 0x38920abd 15000
+        replygump 0x38920abd 3
+        waitforgump 0x38920abd 15000
+        waitfortarget 15000
+        target! 'found'
+        waitforgump 0x38920abd 15000
+        if counttype 0x1bd7 'any' 'backpack' < 20
+          pushlist 'grabWoodFromStockpile' 1
+        endif
+      else
+        pushlist 'grabWoodFromStockpile' 1
+      endif
+    elseif skill 'Carpentry' < 75
+      if @findtype 0xe9e 'any' 'backpack'
+        // If we have any tambourines made.
+        useobject 'tool'
+        waitforgump 0x38920abd 15000
+        replygump 0x38920abd 3
+        waitforgump 0x38920abd 15000
+        waitfortarget 15000
+        target! 'found'
+        waitforgump 0x38920abd 15000
+        if counttype 0x1bd7 'any' 'backpack' < 20
+          pushlist 'grabWoodFromStockpile' 1
+        endif
+      else
+        pushlist 'grabWoodFromStockpile' 1
+      endif
+    elseif skill 'Carpentry' < 100
+      if @findtype 0x2805 'any' 'backpack'
+        // If we have any Bamboo Flutes made.
+        useobject 'tool'
+        waitforgump 0x38920abd 15000
+        replygump 0x38920abd 3
+        waitforgump 0x38920abd 15000
+        waitfortarget 15000
+        target! 'found'
+        waitforgump 0x38920abd 15000
+        if counttype 0x1bd7 'any' 'backpack' < 20
+          pushlist 'grabWoodFromStockpile' 1
+        endif
+      else
+        pushlist 'grabWoodFromStockpile' 1
+      endif
+    elseif skill 'Carpentry' <= 120
+      if @findtype 0x1eba 'any' 'backpack'
+        // If we have any Repair Kits made.
+        useobject 'tool'
+        waitforgump 0x38920abd 15000
+        replygump 0x38920abd 3
+        waitforgump 0x38920abd 15000
+        waitfortarget 15000
+        target! 'found'
+        waitforgump 0x38920abd 15000
+        if counttype 0x1bd7 'any' 'backpack' < 20
+          pushlist 'grabWoodFromStockpile' 1
+        endif
+      else
+        pushlist 'grabWoodFromStockpile' 1
+      endif
+    endif
+  else
+    headmsg 'Script Stopped: You need atleast 20 wood, and you have no tools.'
+    stop
+  endif
+endif
+// We need to get wood from the stockpile.
+if list 'grabWoodFromStockpile' > 0
+  clearlist 'grabWoodFromStockpile'
+  if @movetype 0x1bd7 'stockpile' 'backpack' 0 0 0 'any' 200
+    pause 1200
+  else
+    if list 'unpackCommodities' > 0
+      if @findtype 0x4b27 'any' 'stockpile' 1 1
+        moveitem 'found' 'backpack' 1 1 1
+        pause 1200
+        useobject 'found'
+        pause 1200
+        target 'stockpile'
+        if @movetype 0x1bd7 'stockpile' 'backpack' 1 1 1 'any' 200
+          pause 1200
+        else
+          headmsg 'Script: Not enough wood in Stock Pile to continue. (3)'
+          stop
+        endif
+      endif
+    else
+      headmsg 'Script: Not enough wood in Stock Pile to continue. (4)'
+      stop
+    endif
+  endif
+endif
+// Lets make sure we have enough tools.
+if counttype 0x1034 'any' 'backpack' < 5
+  for 5
+    if @movetype 0x1034 'stockpile' 'backpack' 0 0 0 'any'
+      pause 1200
+    endif
+  endfor
+endif
+clearlist 'grabWoodFromStockpile'
+clearlist 'grabToolFromStockpile'
+while @findtype 0x1034 'any' 'backpack' 1 1
+  // While we have a carpentry tool in backpack.
+  setalias 'tool' 'found'
+  useobject 'tool'
+  if skill 'Carpentry' < 65
+    // Build a club
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 101
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 200
+    waitforgump 0x38920abd 15000
+    waitforgump 0x38920abd 15000
+  elseif skill 'Carpentry' < 75
+    // Build a Tambourine
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 102
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 203
+    waitforgump 0x38920abd 15000
+    waitforgump 0x38920abd 15000
+  elseif skill 'Carpentry' < 100
+    // Build a Bambo Flute
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 102
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 204
+    waitforgump 0x38920abd 15000
+    waitforgump 0x38920abd 15000
+  elseif skill 'Carpentry' <= 120
+    // Build a Repair Kit
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 103
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 200
+    waitforgump 0x38920abd 15000
+    waitforgump 0x38920abd 15000
+  endif
+  while @findobject 'tool'
+    // While the carpentry tool we found still exists...
+    if counttype 0x1bd7 'any' 'backpack' < 20
+      pushlist 'doRecycle' 1
+    elseif contents 'backpack' >= 125
+      pushlist 'doRecycle' 1
+    elseif weight >= maxweight
+      pushlist 'doRecycle' 1
+    endif
+    if list 'doRecycle' > 0
+      headmsg 'Recycling.'
+      clearlist 'doRecycle'
+      if skill 'Carpentry' < 65
+        if @findtype 0x13b4 'any' 'backpack'
+          // We have clubs that we can recycle.
+          replygump 0x38920abd 3
+          waitforgump 0x38920abd 15000
+          waitfortarget 15000
+          target! 'found'
+          waitforgump 0x38920abd 15000
+          if counttype 0x1bd7 'any' 'backpack' < 20
+            pushlist 'grabWoodFromStockpile' 1
+          endif
+        else
+          pushlist 'grabWoodFromStockpile' 1
+        endif
+      elseif skill 'Carpentry' < 75
+        if @findtype 0xe9e 'any' 'backpack'
+          // We have Tambourines we can recycle.
+          replygump 0x38920abd 3
+          waitforgump 0x38920abd 15000
+          waitfortarget 15000
+          target! 'found'
+          waitforgump 0x38920abd 15000
+          if counttype 0x1bd7 'any' 'backpack' < 20
+            pushlist 'grabWoodFromStockpile' 1
+          endif
+        else
+          pushlist 'grabWoodFromStockpile' 1
+        endif
+      elseif skill 'Carpentry' < 100
+        if @findtype 0x2805 'any' 'backpack'
+          // We have Bamboo Flutes we can recycle.
+          replygump 0x38920abd 3
+          waitforgump 0x38920abd 15000
+          waitfortarget 15000
+          target! 'found'
+          waitforgump 0x38920abd 15000
+          if counttype 0x1bd7 'any' 'backpack' < 20
+            pushlist 'grabWoodFromStockpile' 1
+          endif
+        else
+          pushlist 'grabWoodFromStockpile' 1
+        endif
+      elseif skill 'Carpentry' <= 120
+        if @findtype 0x1eba 'any' 'backpack'
+          // We have Repair Kit we can recycle.
+          replygump 0x38920abd 3
+          waitforgump 0x38920abd 15000
+          waitfortarget 15000
+          target! 'found'
+          waitforgump 0x38920abd 15000
+          if counttype 0x1bd7 'any' 'backpack' < 20
+            pushlist 'grabWoodFromStockpile' 1
+          endif
+        else
+          pushlist 'grabWoodFromStockpile' 1
+        endif
+      endif
+      if list 'grabWoodFromStockpile' > 0
+        clearlist 'grabWoodFromStockpile'
+        headmsg 'Grabbing wood from Stock Pile.'
+        if @movetype 0x1bd7 'stockpile' 'backpack' 1 1 1 'any' 500
+          pause 1200
+        else
+          if list 'unpackCommodities' > 0
+            if @findtype 0x4b27 'any' 'stockpile' 1 1
+              moveitem 'found' 'backpack' 1 1 1
+              pause 1200
+              useobject 'found'
+              pause 1200
+              target 'stockpile'
+              if @movetype 0x1bd7 'stockpile' 'backpack' 0 0 0 'any' 500
+                pause 1200
+              else
+                headmsg 'Script: Not enough wood in Stock Pile to continue. (1)'
+                stop
+              endif
+            endif
+          else
+            headmsg 'Script: Not enough wood in Stock Pile to continue. (2)'
+            stop
+          endif
+        endif
+      endif
+    endif
+    if skill 'Carpentry' < 65
+      // Build a club
+      replygump 0x38920abd 200
+      waitforgump 0x38920abd 15000
+      waitforgump 0x38920abd 15000
+    elseif skill 'Carpentry' < 75
+      replygump 0x38920abd 203
+      waitforgump 0x38920abd 15000
+      waitforgump 0x38920abd 15000
+    elseif skill 'Carpentry' < 100
+      replygump 0x38920abd 204
+      waitforgump 0x38920abd 15000
+      waitforgump 0x38920abd 15000
+    elseif skill 'Carpentry' < 120
+      replygump 0x38920abd 200
+      waitforgump 0x38920abd 15000
+      waitforgump 0x38920abd 15000
+    endif
+  endwhile
+  // If we don't have any tools in the backpack, lets move some over.
+  if counttype 0x1034 'any' 'backpack' = 0
+    waitforcontents 'stockpile' 2000
+    for 5
+      @movetype 0x1034 'stockpile' 'backpack' 0 0 0 'any'
+      pause 1200
+    endfor
+  endif
+  replygump 0x38920abd 0
+  waitforcontents 'backpack' 2000
+endwhile
+headmsg 'Script Stopped: You have no more carpentry tools.'
+unsetalias 'tool'

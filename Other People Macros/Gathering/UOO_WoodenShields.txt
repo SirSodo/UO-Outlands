@@ -1,0 +1,89 @@
+/////////////////////////////////////////////
+// UO Steam Shield Crafting Macro
+// for Outlands
+//
+// v1.0
+// * crafts wooden shields and sells them to a nearby vendor
+//
+// v1.1
+// * server started not responding to saw use, added 3x uses to make sure it did.
+// * also removed code waiting for final gumps in crafing menu they were getting
+//   detected 100% of the time. Something changed on server with regards to this.
+// * only checks for normal wood planks
+//
+// REQUIRES:
+// =========
+// 1) You have wooden shields on vendor sell agent [x] Enabled
+// 2) You the correct type of wood pre-selected in crafting menu
+// 3) You have saws
+// 4) You have boards (if you have logs, click them to make boards)
+//
+// You can use any wood you want, just make sure crafting menu has
+// board type selected you want to use first.
+//
+/////////////////////////////////////////////
+
+//
+// Wood check (normal)
+// 
+if counttype 0x1bd7 0 'backpack' < 6
+    headmsg 'I have no wood' '88'
+    stop
+endif
+
+///
+/// while enough boards (normals)
+///
+while counttype 0x1bd7 0 'backpack' >= 6
+    //
+    // Check weight
+    //
+    if diffweight < 10
+        headmsg 'I am too heavy, please unload me' '88'
+        pause 5000
+        continue
+    endif
+    //
+    // Craft
+    //
+    if @findtype 0x1034 'any' 'backpack'
+        //
+        // Use 3x = sometimes server doesnt respond
+        //
+        useobject 'found'
+        pause 100
+        useobject 'found'
+        pause 100
+        useobject 'found'
+        pause 100
+        //
+        // Craft gump - select weapons/shields
+        //
+        waitforgump 0x38920abd 15000
+        replygump 0x38920abd 101
+        waitforgump 0x38920abd 15000
+        //
+        // Seems short pause is needed here before gump can accept actions
+        //
+        pause 200
+        //
+        // Reply with Wooden Shield
+        // 
+        replygump 0x38920abd 205
+        //
+        // Do not! wait for for gumps here (very buggy), just pause.
+        //
+        pause 2000
+    else
+        headmsg 'I have no saws, please give me some' '88'
+        pause 5000
+        continue
+    endif
+    //
+    // Sell
+    //
+    while @counttype 0x1b7a 'any' 'backpack' > 0
+        msg "vendor sell"
+        pause 1000
+    endwhile
+endwhile

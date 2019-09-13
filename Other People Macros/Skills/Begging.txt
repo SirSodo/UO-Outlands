@@ -1,0 +1,50 @@
+/////////////////////////////////////////////
+// UO Steam Begging Script
+// for Outlands
+// by Jewele
+//
+// Walk around town, begging from NPCs you 
+// stand next to. The "flashing" effect is 
+// expected, as its searching for targets and
+// checking distance.
+//
+// UOSTEAM COPY-PASTE BELOW THIS LINE
+/////////////////////////////////////////////
+@removelist 'found'
+@createlist 'found'
+@removetimer 'beg'
+@createtimer 'beg'
+@settimer 'beg' 5001
+
+while not dead
+    
+
+    if timer 'beg' > 5000
+
+        @removetimer 'search'
+        @createtimer 'search'
+    	@clearlist 'found'
+        while timer 'search' < 1000
+            @unsetalias 'enemy'
+            @getenemy 'Innocent' 'Humanoid' 'transformation'
+            @pushlist! 'found' 'enemy'
+        endwhile
+
+        //
+        // Sort by distance
+        //  
+        for 0 to 'found'
+            if @findobject found[] 0 0 0 1
+                msg 'spare a penny?'
+                useskill 'begging'
+                waitfortarget 5000
+                target! found[]
+                @settimer 'beg' 0
+            endif
+        endfor
+
+    endif
+
+    pause 2000
+
+endwhile

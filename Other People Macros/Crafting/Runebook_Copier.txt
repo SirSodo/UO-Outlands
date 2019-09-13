@@ -1,0 +1,200 @@
+/////////////////////////////////////////////
+// UO Steam Runebook Copier
+// for Outlands
+// by Jewele
+//
+// Copies a runebook in your pack. This is meant for full 
+// runebooks. If you need to copy less than a full book,
+// just watch for it to start hitting empty rune entries,
+// and manually stop it.
+//
+// Script asks you for your personal runebook, with a 
+// a safe place marked by default. This is in case you
+// have to afk suddenly and script wont leave you in
+// wilderness.
+//
+// Aggro can be a problem in some spots, when you arrive
+// the script will announce it will mark in 5 seconds,
+// giving you time to run to a safe spot to mark and get out.
+//
+// This is meant to use a stack of unmarked runes and then
+// mark them, one by one. It will not recycle your old 
+// marked runes - just throw those away!
+//
+// How to use?
+// -----------
+// 1) You need:
+//    1 personal runebook with default (safe place)
+//    1 runebook to copy
+//    1 blank runebook
+//    16 blank runes
+//    Enough magery not to fizzle a mark,
+//       and enough mana to cast mark.
+// 2) Review the 'Names' list below and edit as needed
+// 2) Run script
+//
+// Version 1.0
+// -----------
+// First release! yay!
+//
+// UOSTEAM COPY-PASTE BELOW THIS LINE
+/////////////////////////////////////////////
+
+sysmsg "Rune book copy script" 88
+sysmsg "Version 1.0" 88
+
+@clearlist 'Names'
+//
+// PUT YOUR RUNE NAMES HERE
+//
+@removelist 'Names'
+@createlist 'Names'
+@pushlist 'Names' 'Name1'
+@pushlist 'Names' 'Name2'
+@pushlist 'Names' 'Name3'
+@pushlist 'Names' 'Name4'
+@pushlist 'Names' 'Name5'
+@pushlist 'Names' 'Name6'
+@pushlist 'Names' 'Name7'
+@pushlist 'Names' 'Name8'
+@pushlist 'Names' 'Name9'
+@pushlist 'Names' 'Name10'
+@pushlist 'Names' 'Name11'
+@pushlist 'Names' 'Name12'
+@pushlist 'Names' 'Name13'
+@pushlist 'Names' 'Name14'
+@pushlist 'Names' 'Name15'
+@pushlist 'Names' 'Name16'
+//
+// NAME UPDATE END
+//
+
+//
+// Rune macro indexes
+//
+@removelist 'Runes'
+createlist 'Runes'
+@pushlist 'Runes' 5
+@pushlist 'Runes' 11
+@pushlist 'Runes' 17
+@pushlist 'Runes' 23
+@pushlist 'Runes' 29
+@pushlist 'Runes' 35
+@pushlist 'Runes' 41
+@pushlist 'Runes' 47
+@pushlist 'Runes' 53
+@pushlist 'Runes' 59
+@pushlist 'Runes' 65
+@pushlist 'Runes' 71
+@pushlist 'Runes' 77
+@pushlist 'Runes' 83
+@pushlist 'Runes' 89
+@pushlist 'Runes' 95
+
+//
+// check blank runes
+//
+if @counttype 0x1f14 2882 'backpack' < 16
+    headmsg "I dont have enough blank runes!" 25
+    sysmsg "Script requires 16 blank runes in your main pack" 25
+    stop
+endif
+
+//
+// check regs : need 33
+//
+@removelist 'scriptregs'
+@createlist 'scriptregs'
+pushlist 'scriptregs' 0xf7a // pearl
+pushlist 'scriptregs' 0xf7b // moss
+pushlist 'scriptregs' 0xf86 // root
+for 0 to 'scriptregs'
+    if @counttype scriptregs[] 'any' 'backpack' < 32
+        headmsg "I dont have enough regs to continue!" 25
+        sysmsg "Script requires 32 of each reg to work" 25
+        stop
+    endif
+endfor
+
+//
+// check no marked runes around
+//
+if @counttype 0x1f14 0 'backpack' > 0
+    headmsg "Please remove all marked runes from my pack" 25
+    sysmsg "Script cannot run with marked runes inside of pack" 25
+    stop
+endif
+
+//
+// open pack
+//
+@useobject 'backpack'
+pause 1000
+
+//
+// prompt user
+//
+@unsetalias 'mybook'
+@unsetalias 'copybook'
+@unsetalias 'blankbook'
+sysmsg "Select your personal runebook with a safe place set default" 88
+promptalias 'mybook'
+sysmsg "Select a runebook to copy" 88
+promptalias 'copybook'
+sysmsg "Select a blank runebook" 88
+promptalias 'blankbook'
+
+for 0 to 'Runes'
+    // Mana
+    if mana <= 30
+        useskill 'Meditation'
+        while not mana == 30
+        endwhile
+    endif
+    pause 1500
+    useobject! 'copybook'
+    waitforgump 0x5c7db029 15000
+    replygump 0x5c7db029 Runes[0]
+    pause 3000
+    // Mana
+    if mana <= 30
+        useskill 'Meditation'
+        while not mana == 30
+        endwhile
+    endif
+    headmsg "Marking in 5 seconds"
+    pause 5000
+    @findtype 0x1f14 2882 'backpack'
+    @canceltarget
+    autotargetobject 'found'
+    cast 'Mark'
+    pause 3500
+    @findtype 0x1f14 0 'backpack'
+    useobject! 'found'
+    waitforprompt 5000
+    promptmsg Names[0]
+    pause 2000
+    moveitem 'found' 'blankbook'
+    pause 500
+    @poplist 'Names' 'front'
+    @poplist 'Runes' 'front'
+
+    //
+    // check marked rune was placed
+    //
+    if @counttype 0x1f14 0 'backpack' > 0
+        headmsg "Problem placing rune into new book" 25
+        sysmsg "Script detected a marked rune in backpack, not placed into book" 25
+        stop
+    endif
+
+endfor
+
+headmsg "All done!"
+
+//
+// Recall to safe spot
+//
+@canceltarget
+autotargetobject 'mybook'
+cast 'Recall'

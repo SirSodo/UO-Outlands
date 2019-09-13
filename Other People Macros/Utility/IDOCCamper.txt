@@ -1,0 +1,42 @@
+/////////////////////////////////////////////
+// UO Steam IDOC Camper
+// for Outlands
+// by Jewele
+//
+// Clicks house sign for idoc
+//
+// How to use?
+// -----------
+// 1) Run script
+// 2) Click sign
+// 3) Wait
+//
+// Version 1.0
+// -----------
+// First release
+//
+// UOSTEAM COPY-PASTE BELOW THIS LINE
+/////////////////////////////////////////////
+
+@unsetalias 'sign'
+promptalias 'sign'
+msg "Select house sign you want to watch"
+@clearjournal
+
+while not dead
+    clickobject 'sign'
+    waitforjournal 'collap' 1000 'system'
+    if @injournal 'collap' 'system'
+        snapshot
+        headmsg 'IT WENT IDOC' 24
+        sysmsg 'IT WENT IDOC' 24
+        stop
+    endif
+    pause 500
+    @clearjournal
+    if not hidden
+        useskill 'hiding'
+        pause 11000
+    endif
+    pause 1000  
+endwhile

@@ -1,0 +1,122 @@
+/////////////////////////////////////////////
+// UO Steam House Status Locator
+// for Outlands
+// by Jewele
+//
+// Searches house signs around you for fairly/greatly/idoc
+//
+// How to use?
+// -----------
+// 1) Run script
+// 2) Run around
+//
+// Version 1.0
+// -----------
+// First release
+//
+// Version 1.1
+// -----------
+// Added a missing sign type (sorry!)
+// Added a 'click' message. This will help you know when you are
+//      going through areas you already have checked.
+//
+// UOSTEAM COPY-PASTE BELOW THIS LINE
+/////////////////////////////////////////////
+
+@clearignorelist
+@removelist 'signtypes'
+@createlist 'signtypes'
+// UO SIGN TYPES
+pushlist 'signtypes' 0xbd1 // default
+pushlist 'signtypes' 0xbd2 // default
+pushlist 'signtypes' 0xbc2 // diamond
+pushlist 'signtypes' 0xbcc // torch
+pushlist 'signtypes' 0xbc8 // smith hammer
+pushlist 'signtypes' 0xbb6 // anchor
+pushlist 'signtypes' 0xbb8 // horse shoes
+pushlist 'signtypes' 0xbd4 // orange slash
+pushlist 'signtypes' 0xbc4 // grapes wine
+pushlist 'signtypes' 0xba4 // bread
+pushlist 'signtypes' 0xbc6 // mortar pestle
+pushlist 'signtypes' 0xba6 // scissors
+pushlist 'signtypes' 0xbaa // scroll
+pushlist 'signtypes' 0xbac // ankh
+pushlist 'signtypes' 0xbae // crystal ball
+pushlist 'signtypes' 0xbb0 // saw
+pushlist 'signtypes' 0xbb4 // candle
+pushlist 'signtypes' 0xbba // redwhite striped
+pushlist 'signtypes' 0xbbc // lute
+pushlist 'signtypes' 0xbbe // arrow
+pushlist 'signtypes' 0xbc0 // sword shield
+pushlist 'signtypes' 0xbca // paints
+pushlist 'signtypes' 0xbce // crossbow
+pushlist 'signtypes' 0xbd0 // dark orange
+pushlist 'signtypes' 0xbd6 // horizontal orange
+pushlist 'signtypes' 0xbdc // checkered
+pushlist 'signtypes' 0xbde // green white 1
+pushlist 'signtypes' 0xbe0 // green white 2
+pushlist 'signtypes' 0xbe2 // green white 3
+pushlist 'signtypes' 0xbe4 // grn white red
+pushlist 'signtypes' 0xbe6 // green purple slash
+pushlist 'signtypes' 0xbe8 // purple blue 1
+pushlist 'signtypes' 0xbea // purple blue 2
+pushlist 'signtypes' 0xbec // purple blue 3
+pushlist 'signtypes' 0xbee // black blue quadrant
+pushlist 'signtypes' 0xbf0 // blue red slash
+pushlist 'signtypes' 0xc0c // gold coins
+pushlist 'signtypes' 0xbf2 // blue white 1
+pushlist 'signtypes' 0xbf4 // blue white 2
+pushlist 'signtypes' 0xbf6 // blue white 3
+pushlist 'signtypes' 0xbf8 // blue white 4
+pushlist 'signtypes' 0xbfa // purple red 1
+pushlist 'signtypes' 0xbfc // red black 1
+pushlist 'signtypes' 0xbfe // red black 2
+pushlist 'signtypes' 0xc00 // red black 3
+pushlist 'signtypes' 0xc02 // purp orange blue 1
+pushlist 'signtypes' 0xc04 // red blue 1
+pushlist 'signtypes' 0xc06 // red blue 2
+pushlist 'signtypes' 0xc08 // red blue 3
+pushlist 'signtypes' 0xc0a // gold cross
+pushlist 'signtypes' 0xc0e // janus
+pushlist 'signtypes' 0xbb2 // sextant
+pushlist 'signtypes' 0xbda // 2 triangles black/orange
+// OUTLANDS SIGN TYPES
+pushlist 'signtypes' 0x72D0
+pushlist 'signtypes' 0x72D1
+pushlist 'signtypes' 0x72D2
+pushlist 'signtypes' 0x72D3
+pushlist 'signtypes' 0x72D4
+pushlist 'signtypes' 0x72D5
+pushlist 'signtypes' 0x72D6
+pushlist 'signtypes' 0x72D7
+pushlist 'signtypes' 0x72D8
+pushlist 'signtypes' 0x72D9
+pushlist 'signtypes' 0x72DA
+pushlist 'signtypes' 0x72DB
+pushlist 'signtypes' 0x72DC
+pushlist 'signtypes' 0x72DD
+pushlist 'signtypes' 0x72DE
+pushlist 'signtypes' 0x72DF
+pushlist 'signtypes' 0x72E0
+pushlist 'signtypes' 0x72E1
+while hits > 0
+    for 0 to 'signtypes'
+        @clearjournal
+        if @findtype signtypes[] 'any' 'ground' 1 16
+            clickobject 'found'
+	    	headmsg 'click'
+            pause 500
+            if @injournal 'fairly' 'system'
+                headmsg "FAIRLY WORN" 25
+            endif
+            if @injournal 'greatly' 'system'
+                headmsg "GREATLY WORN" 25
+            endif
+            if @injournal 'collap' 'system'
+                headmsg "IDOC!!! IDOC!!!" 25
+            endif
+            @ignoreobject 'found'
+        endif
+    endfor
+    pause 200
+endwhile

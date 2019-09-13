@@ -1,0 +1,110 @@
+/////////////////////////////////////////////
+// UO Steam Get Closest Enemy Macro
+// for Outlands
+//
+// This macro _gets_ your closest target by a filter you set (below) and sets
+// your UOSteam alias 'enemy' to that target. It does not attack it, it only
+// sets the alias. You will need another macro to actually attack. Make sure to 
+// bind script 'AttackEnemy.txt' to another key.
+//
+// Recommendation:
+// ===============
+// [MOUSEDOWN] = 'getenemy.txt'
+// [MOUSEUP] = 'attackenemy.txt'
+// 
+// IMPORTANT
+// =========
+// Customize the filter on what you want to target.
+// Blue PVM = 'murderer' 'enemy' 'criminal' 'gray' 'next'
+// Blue PVP = 'murderer' 'enemy' 'criminal' 'red' 'grey' 'humanoid' 'next'
+// Red PVP = 'murderer' 'enemy' 'innocent' 'criminal' 'red' 'grey' 'humanoid' 'next'
+//
+// How to use:
+// ===========
+// 1) Save your current equipment as 'default'
+//    in dress macro. 
+// 2) Figure out what filter you want
+// 3) Run script any time to get an enemy.
+//
+// Version History:
+// ----------------
+// * 1.0 initial release
+// * 1.1 performance fixes, lots of notes, enemy highlight
+// * 1.2 added dress check
+//
+// Notes:
+// ------
+// 'transformation' filter is not needed on UO Outlands.
+//
+/////////////////////////////////////////////
+
+//
+// Unset your current enemy
+//
+@unsetalias 'enemy'
+
+//
+// run dress macro
+//
+dress 'default'
+while dressing
+endwhile
+
+//
+// Run search loop for all targets and insert into list
+// 
+@removelist 'found'
+@createlist 'found'
+for 0 to 20
+    @unsetalias 'enemy'
+    @getenemy 'murderer' 'enemy' 'criminal' 'gray' 'next'
+    @pushlist! 'found' 'enemy'
+endfor
+
+//
+// Create a distances list, seeding from 1
+// 
+@removelist 'distances'
+@createlist 'distances'
+pushlist 'distances' 1
+pushlist 'distances' 2
+pushlist 'distances' 3
+pushlist 'distances' 4
+pushlist 'distances' 5
+pushlist 'distances' 6
+pushlist 'distances' 7
+pushlist 'distances' 8
+pushlist 'distances' 9
+pushlist 'distances' 10
+pushlist 'distances' 11
+pushlist 'distances' 12
+pushlist 'distances' 13
+pushlist 'distances' 14
+pushlist 'distances' 15
+
+//
+// Sort by distance
+// with closest first
+//  
+@removelist 'targets'
+@createlist 'targets'
+for 0 to 'distances'
+    for 0 to 'found'
+        if @findobject found[] 0 0 0 distances[]
+            @pushlist! 'targets' found[]
+        endif
+    endfor
+endfor
+
+//
+// Set alias 'enemy' to target
+//
+if list 'targets' > 0
+    headmsg "*Ready*" 22
+    @unsetalias 'enemy'
+    @setalias 'enemy' targets[0]
+    // Leave out ampersand on this one
+    getenemy 'enemy'
+else
+    headmsg "No targets" 44
+endif

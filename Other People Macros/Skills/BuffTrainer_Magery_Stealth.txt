@@ -1,0 +1,267 @@
+/////////////////////////////////////////////
+// UO Steam Recall Skill Buff Trainer
+// for Outlands
+// by Jewele
+// 
+// !MINOC SYNDICATE ONLY!
+//
+// Recalls you to a marked location to kill a bird,
+// back to a marked training spot, trains, and 
+// when needed, recalls you to a marked bank rune
+// to restock scriptregs.
+// 
+// How to use?
+// -----------
+// 1) Mark a rune at a bank
+// 2) Mark a rune at a bird spawn
+// 3) Place both runes in your backpack
+// 4) Start at -bank-, with banker in sight
+// 5) Run script
+//
+// Version 1.0
+// -----------
+// First release! yay!
+//
+// Version 1.1
+// -----------
+// Added cancel target after trying to kill a bird
+//
+// Version 1.2
+// -----------
+// Will ignore a bird it cant kill
+//
+// Version 1.3
+// -----------
+// Clears target after cast
+// Removed need for training spot rune (use the bank)
+//
+// Version 1.4
+// -----------
+// Added guard against server save issue
+//
+// Version 1.5
+// -----------
+// Bumped recall regs to 50
+//
+// Version 1.6
+// -----------
+// Will now check bird flag before killing
+//
+// Version 1.7
+// -----------
+// Precasts Lightning when killing birds
+//
+// UOSTEAM COPY-PASTE BELOW THIS LINE
+/////////////////////////////////////////////
+
+sysmsg "Buff Trainer Script - Stealth 88
+sysmsg "Version 1.7" 88
+
+@useobject 'backpack'
+pause 1000
+
+if not findalias 'bankrune'
+    sysmsg "Select rune for bank access" 88
+    promptalias 'bankrune'
+endif
+if not findalias 'birdrune'
+    sysmsg "Select rune for bird killing" 88
+    promptalias 'birdrune'
+endif
+if not findalias 'bankbag'
+    msg "bank"
+    pause 1000
+    sysmsg "Select a bag with reagents in your bank" 88
+    promptalias 'bankbag'
+endif
+if not findalias 'banker'
+    sysmsg "Select the banker at your bank" 88
+    promptalias 'banker'
+endif
+
+//
+// Actions list
+//
+@removelist 'actions'
+@createlist 'actions'
+pushlist 'actions' 'restock'
+
+//
+// Script Regs (stocks 10)
+// 
+@removelist 'scriptregs'
+@createlist 'scriptregs'
+pushlist 'scriptregs' 0xf7a // pearl
+pushlist 'scriptregs' 0xf7b // moss
+pushlist 'scriptregs' 0xf86 // root
+pushlist 'scriptregs' 0xf8c // ash
+
+msg "bank"
+pause 1000
+msg "bank"
+pause 1000
+
+while not dead
+
+    // 
+    // Reg check
+    // 
+    if not @inlist! 'actions' 'restock'
+        // script regs
+        for 0 to 'scriptregs'
+            if @counttype scriptregs[] 'any' 'backpack' < 5
+                @clearlist 'actions'
+                pushlist 'actions' 'restock'
+                continue
+            endif
+        endfor
+    endif
+
+    //
+    // Restock regs
+    //
+    if @inlist! 'actions' 'restock'
+        sysmsg "Heading to bank" 88
+        pause 200
+        @clearlist 'actions'
+        // check if we are at bank
+        if not @inrange 'banker' 30
+            // mana to recall
+            while mana < 15
+                useskill 'meditation'
+                pause 6000
+            endwhile
+            // recall
+            @canceltarget
+            cast "Recall"
+            waitfortarget 5000
+            target! 'bankrune'
+            pause 2000
+        endif
+
+        // check if we are at bank
+        if @inrange 'banker' 30
+            resync
+            msg "bank"
+            pause 2000
+            msg "bank"
+            pause 2000
+            @useobject 'bankbag'
+            pause 2000
+            //
+            // Reg restocking is extremely unreliable!
+            //
+            for 0 to 'scriptregs'
+                removetimer 'restock'
+                createtimer 'restock'
+                while counttype scriptregs[] 'any' 'backpack' < 50
+                    sysmsg "restocking reagent" 55
+                    movetype scriptregs[] 'bankbag' 'backpack' 0 0 0 'any' 50
+                    pause 1500
+                    if timer 'restock' > 30000
+                        sysmsg "I cannot restock the script regs" 55
+                        stop
+                    endif
+                endwhile
+            endfor
+            pushlist 'actions' 'train'    
+            continue
+        else
+            sysmsg "ERROR : Either start at bank or start with scriptregs in pack to recall to bank"
+            stop
+        endif
+    endif
+
+    // 
+    // Buff check
+    // 
+    if not @inlist! 'actions' 'buff'
+        if not buffexists 'Arcane Empowerment'
+            @clearlist 'actions'
+            pushlist 'actions' 'buff'
+            continue
+        endif
+    endif
+
+    //
+    // Get buff
+    //
+    if @inlist! 'actions' 'buff'
+        sysmsg "Getting skill buff" 88
+        pause 200
+        @clearlist 'actions'
+        // mana to recall
+        while mana < 15
+            useskill 'meditation'
+            pause 6000
+        endwhile
+        // recall
+        @canceltarget
+        cast "Recall"
+        waitfortarget 5000
+        target! 'birdrune'
+        pause 2000
+        // mana to cast lightning
+        while mana < 15
+            useskill 'meditation'
+            pause 6000
+        endwhile
+        // get buff
+        while not buffexists 'Arcane Empowerment'
+            sysmsg "Looking for a bird to kill"
+            removelist 'birds'
+            createlist 'birds'
+            pushlist 'birds' '0x6'
+            @canceltarget
+            cast 'Lightning'
+            waitfortarget 5000
+            while @targetexists
+                for 0 to 'birds'
+                    if @findtype birds[] 'any' 'ground' 12
+                        target! 'found'
+                        @ignoreobject 'found'
+                    endif
+                    pause 100
+                endfor
+            endwhile
+            pause 2000
+        endwhile
+        // mana to recall
+        while mana < 15
+            useskill 'meditation'
+            pause 6000
+        endwhile
+        @pushlist 'actions' 'restock'
+        continue
+    endif
+
+    // 
+    // Train
+    // 
+    if @inlist! 'actions' 'train'
+        pause 200
+        @clearlist 'actions'
+        //
+        // INSERT TRAINING SEQUENCE HERE
+        //
+        // START > 
+        //
+		if not hidden 'self'
+			useskill "hiding"
+			pause 11000
+		else
+			useskill "stealth"
+			pause 11000
+		endif    
+        // < END
+        pushlist 'actions' 'train'
+    endif
+
+    pause 200
+
+    //
+    // Server save fix
+    // 
+    pushlist 'actions' 'train'
+
+endwhile

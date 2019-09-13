@@ -1,0 +1,112 @@
+/////////////////////////////////////////////
+// UO Steam Spellbook Macro
+// for Outlands
+//
+// Steps for using:
+// 1) Have two bags you want to sort into
+// 2) Have the necessary materials available in your pack
+//
+// Version 1.0
+// -----------
+// * creates spellbooks and sorts them into two bags:
+//   a) a sell/scrap bag
+//   b) exceptional bag
+//
+/////////////////////////////////////////////
+
+@unsetalias 'SaveBag'
+promptalias 'Savebag'
+
+@unsetalias 'SellBag'
+promptalias 'SellBag'
+
+@useobject 'SaveBag'
+pause 300
+@useobject 'SellBag'
+pause 300
+
+//
+// Hide
+//
+if not hidden 'self' and skill 'hiding' >= 50
+    useskill 'hiding'
+endif
+
+// 
+// Scroll check
+//
+if counttype 0xef3 'any' 'backpack' < 5
+    headmsg 'I have no scrolls!' '88'
+    stop
+endif
+
+///
+/// while we have scrolls
+///
+while counttype 0xef3 'any' 'backpack' >= 5
+
+    @clearjournal
+
+    //
+    // Check weight
+    //
+    if diffweight < 10
+        headmsg 'I am too heavy, please unload me' '88'
+        pause 5000
+        continue
+    endif
+
+    //
+    // Craft
+    //
+    if @findtype 0xfc0 'any' 'backpack'
+        useobject 'found'
+        pause 100
+        useobject 'found'
+        pause 100
+        useobject 'found'
+        pause 100
+        //
+        // Craft gump - spellbooks
+        //
+        waitforgump 0x38920abd 15000
+        replygump 0x38920abd 100
+        waitforgump 0x38920abd 15000
+        //
+        // Seems short pause is needed here before gump can accept actions
+        //
+        pause 200
+        //
+        // Reply with spellbook
+        // 
+        replygump 0x38920abd 200
+        //
+        // Do not! wait for for gumps here (very buggy), just pause.
+        //
+        pause 2000
+    else
+        headmsg 'I have no pens, please give me some' '88'
+        pause 5000
+        continue
+    endif
+
+    //
+    // Sort
+    //
+    if @findtype 0xefa 'any' 'backpack' 1 2
+        @clickobject 'found'
+        pause 500
+        if @injournal 'exceptional' 'system'
+            moveitem 'found' 'Savebag'
+            headmsg '*Exceptional*' 91
+            pause 1000
+        else
+            moveitem 'found' 'SellBag'
+            pause 1000
+        endif
+        @clearjournal
+        @ignoreobject 'found'
+        pause 500
+    endif
+
+endwhile

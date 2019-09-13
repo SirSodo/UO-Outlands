@@ -1,0 +1,96 @@
+/////////////////////////////////////////////
+// UO Steam Taming Macro
+// for Outlands
+//
+// This is a good script if you know you want to tame a certain mob - and will be where it spawns.
+// You just run it while sitting in the spawn area or run it while walking around. Feel free to change
+// the name of your tameable (search replace 'Ozy' with 'YourName').
+//
+// There is no way to tell if something is already tamed - if you are near other tamers :( So just
+// walk away from that tame and the script will pick up the the next one.
+//
+// v1.0
+// ----
+// * Initial version
+//
+// v2.0
+// ----
+// * using msg release - its much more reliable.
+//
+/////////////////////////////////////////////
+
+//
+// You will constantly be updating this list, just re-create every time
+//
+removelist 'tameables'
+createlist 'tameables' 
+
+pushlist 'tameables' 0x6 //Raven
+pushlist 'tameables' 0x27 //Mongbat
+pushlist 'tameables' 0xd7 //Giant Rat
+pushlist 'tameables' 0x50 //Colossal Frog
+pushlist 'tameables' 0xdd //Walrus
+
+if not @inrange 'tobetamed' 2
+    @unsetalias 'tobetamed' 
+    for 0 in 'tameables' 
+        if @findtype tameables[] 'any' 'ground' 1 2 
+            @setalias 'tobetamed' 'found' 
+            break 
+        endif 
+    endfor 
+endif 
+
+if not @inrange 'tobetamed' 2 
+    headmsg 'Looking...' 91
+    pause 2000
+    replay 
+endif 
+
+while name 'tobetamed' != 'Ozy'
+
+    autotargetobject 'tobetamed' 
+    useskill 'animal taming' 
+    pause 6000
+    @rename 'tobetamed' 'Ozy' 
+    pause 1000 
+    if not @inrange 'tobetamed' 1 
+        if @x 'tobetamed' > x 'self' and @y 'tobetamed' > y 'self' 
+            walk 'Southeast' 
+        elseif @x 'tobetamed' < x 'self' and @y 'tobetamed' > y 'self' 
+            walk 'Southwest' 
+        elseif @x 'tobetamed' > x 'self' and @y 'tobetamed' < y 'self' 
+            walk 'Northeast' 
+        elseif @x 'tobetamed' < x 'self' and @y 'tobetamed' < y 'self' 
+            walk 'Northwest' 
+        elseif @x 'tobetamed' > x 'self' and @y 'tobetamed' == y 'self' 
+            walk 'East' 
+        elseif @x 'tobetamed' < x 'self' and @y 'tobetamed' == y 'self' 
+            walk 'West' 
+        elseif @x 'tobetamed' == x 'self' and @y 'tobetamed' > y 'self' 
+            walk 'South' 
+        elseif @x 'tobetamed' == x 'self' and @y 'tobetamed' < y 'self' 
+            walk 'North' 
+        endif 
+    endif
+
+    //
+    // Player left tame attempt
+    //
+    if not @inrange 'tobetamed' 3
+        headmsg "you moved too far" 44
+        @ignoreobject 'tobetamed' 
+        @unsetalias 'tobetamed' 
+        replay
+    endif
+
+endwhile 
+
+msg 'Ozy Release'
+waitforgump 0x909cc741 5000
+replygump 0x909cc741 1
+@ignoreobject 'tobetamed'
+@unsetalias 'tobetamed'
+
+pause 1000
+replay

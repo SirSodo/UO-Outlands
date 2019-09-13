@@ -1,0 +1,20 @@
+/////////////////////////////////////////////
+// UO Steam Stealth Training Macro
+// for Outlands
+//
+// Prioritizes getting hiding up to 100,
+// with Stealth mixed in when possible.
+/////////////////////////////////////////////
+while not dead
+  if skill 'hiding' < 100
+    useskill "hiding"
+    pause 11000
+  endif
+  if not hidden 'self'
+    useskill "hiding"
+    pause 11000
+  else
+    useskill "stealth"
+    pause 11000
+  endif
+endwhile

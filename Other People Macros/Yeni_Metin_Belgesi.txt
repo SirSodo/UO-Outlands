@@ -1,0 +1,150 @@
+/////////////////////////////////////////////
+// UO Steam Taming Macro
+// for Outlands
+//
+/////////////////////////////////////////////
+sysmsg "AFK Taming Macro - Version 1.0" 44
+@cleartargetqueue
+//
+// First time use will prompt user for pets
+//
+if not listexists 'pets'
+  sysmsg "Select one pet after another" 44
+  sysmsg "When all pets are selected, press ESC" 44
+  @createlist 'pets'
+  //
+  // Maximum 5
+  //
+  for 5
+    sysmsg "Select next pet" 44
+    promptalias 'pet'
+    if @findobject 'pet'
+      pushlist 'pets' 'pet'
+      sysmsg "Your pet has been saved" 44
+    else
+      break
+    endif
+  endfor
+  sysmsg "Thank you, pets saved" 44
+endif
+while not dead
+  @unsetalias 'tamethis'
+  @setskill 'animal taming' 'locked'
+  msg "All Follow Me"
+  //
+  // No bandage warning
+  //
+  if @counttype '0xe21' 'any' 'backpack' == 0
+    sysmsg "No bandages!" 38
+    stop
+  endif
+  //
+  // Low bandage warning
+  //
+  if @counttype '0xe21' 'any' 'backpack' < 20
+    sysmsg "Low bandages!" 38
+  endif
+  //
+  // Find something to tame
+  //
+  sysmsg "Finding creature to tame..." 44
+  while not findalias 'tamethis'
+    getenemy 'enemy' 'criminal' 'gray' 'next'
+    if @findobject 'enemy' and @inrange 'enemy' 5
+      setalias 'tamethis' 'enemy'
+    endif
+    pause 500
+  endwhile
+  //
+  // Aggro pets on tame
+  //
+  msg "All kill"
+  waitfortarget 5000
+  target! 'tamethis'
+  pause 3000
+  //
+  // Bring them back
+  //
+  msg "All Follow Me"
+  pause 1000
+  //
+  // Check self health
+  //
+  while diffhits > 1
+    msg "All guard me"
+    cast 'Greater Heal'
+    autotargetself
+    pause 5000
+    playsound 'buzzer.wav'
+    continue
+  endwhile
+  //
+  // Start taming
+  //
+  sysmsg "Taming" 44
+  while name 'tamethis' != 'ImTamed'
+    @setskill 'animal taming' 'up'
+    useskill 'animal taming'
+    waitfortarget 5000
+    target! 'tamethis'
+    for 0 to 'pets'
+      if diffhits 'pets[]' > 10
+        @usetype '0xe21' 'any' 'backpack'
+        waitfortarget 5000
+        target! 'pets[]'
+        break
+      endif
+    endfor
+    pause 6000
+    for 0 to 'pets'
+      if diffhits 'pets[]' > 10
+        @usetype '0xe21' 'any' 'backpack'
+        waitfortarget 5000
+        target! 'pets[]'
+        break
+      endif
+    endfor
+    pause 6000
+    //
+    // Renaming and detecting renames is very buggy
+    //
+    @rename 'tamethis' 'ImTamed'
+    pause 500
+    @rename 'tamethis' 'ImTamed'
+    pause 500
+    @rename 'tamethis' 'ImTamed'
+    pause 500
+    @rename 'tamethis' 'ImTamed'
+    pause 500
+    //
+    // Health check
+    //
+    while diffhits > 1
+      msg "All guard me"
+      cast 'Greater Heal'
+      autotargetself
+      pause 5000
+      playsound 'buzzer.wav'
+      continue
+    endwhile
+  endwhile
+  sysmsg "Killing tame" 44
+  //
+  // Lock, release and kill
+  //
+  @setskill 'animal taming' 'locked'
+  msg "ImTamed release"
+  pause 2000
+  while gumpexists '0x909cc741'
+    replygump 0x909cc741 1
+  endwhile
+  pause 1000
+  msg "all kill"
+  waitfortarget 5000
+  target! 'tamethis'
+  while @findobject 'tamethis'
+    sysmsg "Waiting for pets to kill"
+    pause 5000
+  endwhile
+  unsetalias 'tamethis'
+endwhile

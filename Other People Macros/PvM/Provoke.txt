@@ -1,0 +1,120 @@
+/////////////////////////////////////////////
+// UO Steam Provoke Macro
+// for Outlands
+//
+// * provokes two closets mobs onto each other
+//
+// Notes:
+//
+// Outlands server does not support 'nearest'
+// or 'closest' filters, making this type of
+// macro very difficult. However, we can work
+// around that (below).
+//
+// There is no way to check line of sight, so
+// if a mob does not have LOS, you
+//
+// Version History:
+// 1.0 * initial release
+/////////////////////////////////////////////
+
+//
+// Create instrument
+//
+@removelist 'instrumentlist'
+@createlist 'instrumentlist'
+@pushlist 'instrumentlist' 0xeb1
+@pushlist 'instrumentlist' 0xeb2
+@pushlist 'instrumentlist' 0xeb3
+@pushlist 'instrumentlist' 0xe9c
+@pushlist 'instrumentlist' 0xe9d
+@pushlist 'instrumentlist' 0xe9e
+
+//
+// Select instrument
+//
+for 0 to 'instrumentlist'
+    @findtype instrumentlist[]
+    @setalias 'instrument' 'found'
+endfor
+
+//
+// Check we have instrument
+//
+if not @findobject 'instrument' 'any' 'backpack'
+    headmsg 'No instruments!' '55' 'self'
+    stop    
+endif
+
+//
+// Use instrument
+//
+@useobject 'instrument'
+
+//
+// Run search loop for all mobs and insert into list
+// This is a 1 second scan of everything around player
+// 
+@removetimer 'search'
+@createtimer 'search'
+@removelist 'targets'
+@createlist 'targets'
+while timer 'search' < 1000
+	@unsetalias 'enemy'
+	@getenemy 'enemy' 'gray' 'criminal'
+	@pushlist! 'targets' 'enemy'
+endwhile
+@removetimer 'search'
+
+//
+// Check to make sure we got enough targets
+//
+if list 'targets' < 2
+	headmsg "Not enough targets to provoke" 44
+	stop
+endif
+
+//
+// Create a distances list, seeding from 1
+// 
+@removelist 'distances'
+@createlist 'distances'
+pushlist 'distances' 1
+pushlist 'distances' 2
+pushlist 'distances' 3
+pushlist 'distances' 4
+pushlist 'distances' 5
+pushlist 'distances' 6
+pushlist 'distances' 7
+pushlist 'distances' 8
+pushlist 'distances' 9
+pushlist 'distances' 10
+
+//
+// Sort the mobs we found by distance
+// with closest first
+//	
+@removelist 'mobs'
+@createlist 'mobs'
+for 0 to 'distances'
+	for 0 to 'targets'
+		if @findobject targets[] 0 0 0 distances[]
+		  	@pushlist! 'mobs' targets[]
+		endif
+	endfor
+endfor
+
+//
+// Provoke the mobs
+//
+if list 'mobs' > 1
+	headmsg "*provoking*" 88
+	useskill 'provocation'
+    waitfortarget 5000
+    @target mobs[0]
+    waitfortarget 5000
+    @target mobs[1]
+    pause 11000
+endif
+
+pause 1000

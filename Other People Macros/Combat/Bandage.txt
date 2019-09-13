@@ -1,0 +1,93 @@
+/////////////////////////////////////////////
+// UO Steam Bandage macro
+//
+// This macro is for combat bandaging keeps and tracks
+// its own run status. So you can switch to another
+// macro, and come back to it. It  will pick up where
+// it left off and keep you alive.
+//
+// v1.0
+// - Initial release
+//
+// v1.1
+// - You can now restart this macro after leaving it
+//   and it will pick up where it left off.
+//
+// v1.2
+// - Now runs in a loop while you are alive
+// - Prints a sysmsg at start to let you know it started
+//
+// v1.3
+// - Opens backpack whenever it starts, UO Steam cannot
+//   find bandages after using gate if your backpack
+//   is not open.
+//
+// v1.4
+// - Cancels existing targets and queue
+//
+/////////////////////////////////////////////
+sysmsg "Bandage script active" 67
+@canceltarget
+@cleartargetqueue
+//
+// Open pack (forces bandage inventory)
+//
+useobject! 'backpack'
+pause 500
+//
+// Loop
+//
+while not dead
+  //
+  // Forces an inventory of your backpack
+  // otherwise counttype may not work
+  //
+  if counttype '0xe21' 'any' 'backpack' == 0
+    sysmsg "No bandages!" 38
+    stop
+  endif
+  //
+  // Resuming existing heal
+  //
+  if timerexists 'healing'
+    //
+    // Loop until finished healing or 15s is reached
+    //
+    while not dead
+      pause 200
+      if @injournal 'heal' 'system'
+        break
+      endif
+      if @injournal 'cure' 'system'
+        break
+      endif
+      if @injournal 'finish' 'system'
+        break
+      endif
+      if timer 'healing' > 15000
+        break
+      endif
+    endwhile
+    removetimer 'healing'
+  else
+    //
+    // Start heal
+    //
+    if poisoned 'self' or diffhits > 10
+      //
+      // bandage count check
+      //
+      if counttype '0xe21' 'any' 'backpack' < 20
+        sysmsg "Low on bandages" 55
+      endif
+      //
+      // heal
+      //
+      createtimer 'healing'
+      headmsg "(bandaging)" 67
+      bandageself
+      @clearjournal
+    endif
+  endif
+  pause 1000
+endwhile

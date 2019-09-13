@@ -1,0 +1,91 @@
+/////////////////////////////////////////////
+// UO Steam Raid Resurrection Macro
+//
+// This macro is for healing/rezzing anyone 
+// who approaches you.
+//
+// v1.0
+// - Initial release
+//
+/////////////////////////////////////////////
+sysmsg "Bandage Rez Script active" 67
+
+//
+// Open pack (forces bandage inventory)
+//
+useobject! 'backpack'
+pause 500
+//
+// Loop
+//
+while not dead
+    //
+    // Check bandages
+    //
+    if counttype '0xe21' 'any' 'backpack' == 0
+        sysmsg "No bandages!" 38
+        stop
+    endif
+    if timerexists 'healing'
+        //
+        // Loop until finished healing or 15s is reached
+        //
+        while not dead
+            pause 200
+            if @injournal 'heal' 'system'
+                break
+            endif
+            if @injournal 'cure' 'system'
+                break
+            endif
+            if @injournal 'finish' 'system'
+                break
+            endif
+            if @injournal 'resurrect' 'system'
+                break
+            endif
+            if timer 'healing' > 15000
+                break
+            endif
+        endwhile
+        removetimer 'healing'
+    else
+        //
+        // Run search loop for all players near you
+        // This is a 1 second scan of everything
+        // 
+        @removetimer 'search'
+        @createtimer 'search'
+        @removelist 'targets'
+        @createlist 'targets'
+        while timer 'search' < 1000
+            @unsetalias 'friend'
+            if @getfriend 'friend' 'innocent'
+                //
+                // check bandage range
+                //
+                if @inrange 'friend' 1
+                    @pushlist! 'targets' 'friend'
+                endif
+            endif
+        endwhile
+        @removetimer 'search'
+        //
+        // bandage count check
+        //
+        if counttype 0xe21 'any' 'backpack' < 20
+            sysmsg "Low on bandages" 55
+        endif
+        //
+        // Heal/rez
+        //
+        if list 'targets' > 0
+           msg "I shall aid thee" 88
+           createtimer 'healing'
+           autotargetobject targets[0]
+           usetype! 0xe21
+           @clearjournal
+        endif
+    endif
+    pause 1000  
+endwhile

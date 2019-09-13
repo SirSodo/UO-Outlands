@@ -1,0 +1,97 @@
+/////////////////////////////////////////////
+// UO Steam Bowcraft Macro
+// for Outlands
+//
+// Steps for using:
+// 1) Have two bags you want to sort into
+// 2) Have the wood type (in boards) you want to use
+// 3) Have the bowcraft crafting menu pre-selected for that wood.
+//    This script will not select the wood in the crafting menu
+//
+// Version 1.0
+// -----------
+// * creates crossbows, sorts them into a sell bag
+//   and a save bag
+//
+/////////////////////////////////////////////
+
+@unsetalias 'SaveBag'
+promptalias 'Savebag'
+
+@unsetalias 'SellBag'
+promptalias 'SellBag'
+
+@useobject 'SaveBag'
+pause 300
+@useobject 'SellBag'
+pause 300
+
+//
+// Hide
+//
+if not hidden 'self' and skill 'hiding' >= 50
+  useskill 'hiding'
+endif
+
+// 
+// Wood check
+//
+if counttype 0x1bd7 'any' 'backpack' < 10
+    headmsg 'I have no boards!' '88'
+    stop
+endif
+
+//
+// while we have boards
+//
+while counttype 0x1bd7 'any' 'backpack' >= 10
+
+    @clearjournal
+
+    //
+    // Check weight
+    //
+    if diffweight < 10
+        headmsg 'I am too heavy, please unload me' '88'
+        pause 5000
+        continue
+    endif
+
+    //
+    // Craft
+    //
+    if @findtype 0x1034 'any' 'backpack'
+        useobject 'found'
+        waitforgump 0x38920abd 5000
+        replygump 0x38920abd 100
+        waitforgump 0x38920abd 5000
+        replygump 0x38920abd 205
+        waitforgump 0x38920abd 5000
+        pause 1000
+        waitforgump 0x38920abd 5000
+        //replygump 0x38920abd 0
+        pause 1500
+    else
+        headmsg 'I have no saws, please give me some' '88'
+        pause 5000
+        continue
+    endif
+
+    //
+    // Sort
+    //
+    if @findtype 0xf50 'any' 'backpack' 1 2
+        @clickobject 'found'
+        pause 500
+        if @injournal 'exceptional' 'system'
+            moveitem 'found' 'Savebag'
+            headmsg '*Exceptional*' 91
+        else
+            moveitem 'found' 'SellBag'
+        endif
+        @clearjournal
+        @ignoreobject 'found'
+        pause 500
+    endif
+
+endwhile

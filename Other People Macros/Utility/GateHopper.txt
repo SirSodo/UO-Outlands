@@ -1,0 +1,19 @@
+/////////////////////////////////////////////
+// UO Steam Gate Hopper Macro
+// for Outlands
+//
+// Hops the nearest moongate or player gate. In case of
+// moongates, just uses your last selection.
+//
+// Really good for getting away from PKs attempting to kill you
+// at a gate. Just hit the button == gone baby.
+//
+// Version History:
+// * 1.0 initial release
+//
+/////////////////////////////////////////////
+usetype '0xf6c' 'any' 'ground' '2'
+pause 175
+replygump 0xe0e675b8 2
+pause 900
+replygump 0xe866525f 2

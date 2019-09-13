@@ -1,0 +1,89 @@
+/////////////////////////////////////////////
+// UO Steam BlackSmith Trainer Macro
+// for Outlands
+//
+// Steps for using:
+// 1) Have ingots (of course)
+// 2) Have tongs (for tool)
+// 3) Do not mix ingot types in your pack (confuses count check)
+// 4) Have the smithing gump pre-selected for the ingot type
+// 5) !IMPORTANT : Attempt to make one of the items you want so it sets Make Last
+// 6) !IMPORTANT : Set your smelt item id to the item you just made in script (below)
+// 7) !IMPORTANT : Set your smelt option to 'Recycle All (of Type)'
+//
+// Version 1.0
+// -----------
+// * first version
+//
+/////////////////////////////////////////////
+
+// 
+// Tong check
+//
+if counttype 0xfbb 'any' 'backpack' < 1
+    headmsg 'I have no tongs!' '88'
+    stop
+endif
+
+///
+/// while we have ingots
+///
+while counttype 0x1bf2 'any' 'backpack' >= 15
+
+    @clearjournal
+
+    //
+    // Check weight
+    //
+    if diffweight < 10
+        headmsg 'I am too heavy, please unload me' '88'
+        pause 5000
+        continue
+    endif
+
+    //
+    // Craft (find and use tongs)
+    //
+    if @findtype 0xfbb 'any' 'backpack'  
+        //
+        // Use 3x = sometimes server doesnt respond
+        //
+        useobject 'found'
+        pause 100
+        useobject 'found'
+        pause 100
+        useobject 'found'
+        pause 100
+        //
+        // Craft gump 
+        //
+        waitforgump 0x38920abd 5000
+        //
+        // Make last
+        // 
+        replygump 0x38920abd 7
+        pause 2000
+    else
+        headmsg 'I have no tongs, please give me some' '88'
+        pause 5000
+        continue
+    endif
+
+    //
+    // Smelt
+    //
+    // Change the id to the graphic type of the item you are working on
+    // 0xf52 is dagger = set yours to your item type
+    //
+    if @findtype 0xf52 'any' 'backpack' 1 2
+        //
+        // Reply smelt
+        //
+        pause 200
+        replygump 0x38920abd 3
+        waitforgump 0x38920abd 5000
+        waitfortarget 5000
+        target! 'found'
+    endif
+
+endwhile

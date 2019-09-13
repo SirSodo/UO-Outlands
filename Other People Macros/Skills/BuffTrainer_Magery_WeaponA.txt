@@ -1,0 +1,363 @@
+/////////////////////////////////////////////
+// UO Steam Recall Skill Buff Trainer
+// for Outlands
+// by Jewele
+//
+// Recalls you to a marked location to kill a bird
+// and then back to a marked training spot.
+//
+// How to use?
+// -----------
+// 1) Mark a rune at a bank, within melee range of dummy
+//    Make sure you leave space to walk two tiles South
+// 2) Mark a rune at a bird spawn
+// 3) Place both runes in your backpack
+// 4) Purchase several wooden training weapons for your skill
+// 5) Review 'scriptregs' and stock bank bag with those
+// 6) Start at -bank-, with banker in sight, and dummy next to you
+// 7) Run script
+//
+// Version 1.0
+// -----------
+// First release! yay!
+//
+// Version 1.1
+// -----------
+// Added cancel target after trying to kill a bird
+//
+// Version 1.2
+// -----------
+// Will ignore a bird it cant kill
+//
+// Version 1.3
+// -----------
+// Clears target before spellcast
+//
+// Version 1.4
+// -----------
+// Added guards against server save issue
+//
+// Version 1.5
+// -----------
+// Bumped recall regs up to 50 from 10
+// Added double request for bank
+//
+// Version 1.6
+// -----------
+// Will now check bird flag before killing
+//
+// Version 1.7
+// -----------
+// Precasts lightning before killing bird
+//
+// Version 1.8
+// -----------
+// Walks you back 2 steps from dummy to get buff
+//
+// UOSTEAM COPY-PASTE BELOW THIS LINE
+/////////////////////////////////////////////
+
+sysmsg "Buff Trainer Script - Weapon Part A" 88
+sysmsg "Version 1.8" 88
+
+@useobject 'backpack'
+pause 1000
+
+if not findalias 'bankrune'
+    sysmsg "Select rune for bank access" 88
+    promptalias 'bankrune'
+endif
+if not findalias 'birdrune'
+    sysmsg "Select rune for bird killing" 88
+    promptalias 'birdrune'
+endif
+if not findalias 'bankbag'
+    msg "bank"
+    pause 1000
+    sysmsg "Select a bag with reagents in your bank" 88
+    promptalias 'bankbag'
+endif
+if not findalias 'banker'
+    sysmsg "Select the banker at your bank" 88
+    promptalias 'banker'
+endif
+if not findalias 'traindummy'
+    sysmsg "Select your account training dummy" 88
+    promptalias 'traindummy'
+endif
+
+//
+// Actions list
+//
+@removelist 'actions'
+@createlist 'actions'
+pushlist 'actions' 'restock'
+
+//
+// Script Regs (stocks 10)
+// 
+@removelist 'scriptregs'
+@createlist 'scriptregs'
+pushlist 'scriptregs' 0xf7a // pearl
+pushlist 'scriptregs' 0xf7b // moss
+pushlist 'scriptregs' 0xf86 // root
+pushlist 'scriptregs' 0xf8c // ash
+
+//
+// Weaps
+// 
+@removelist 'weps'
+@createlist 'weps'
+pushlist 'weps' 0x13b9 // wooden sword
+pushlist 'weps' 0x13b4 // wooden club
+pushlist 'weps' 0x1401 // wodden kryss
+
+msg "bank"
+pause 1000
+msg "bank"
+pause 1000
+
+while not dead
+
+    // 
+    // Reg check
+    // 
+    if not @inlist! 'actions' 'restock'
+        // script regs
+        for 0 to 'scriptregs'
+            if @counttype scriptregs[] 'any' 'backpack' < 5
+                @clearlist 'actions'
+                pushlist 'actions' 'restock'
+                continue
+            endif
+        endfor
+    endif
+
+    //
+    // Restock regs
+    //
+    if @inlist! 'actions' 'restock'
+        sysmsg "Checking / restocking regs" 88
+        pause 200
+        @clearlist 'actions'
+        // check if we are at bank
+        if not inrange 'banker' 30
+            // mana to recall
+            while mana < 15
+                useskill 'meditation'
+                pause 6000
+            endwhile
+            // recall
+            @canceltarget
+            cast "Recall"
+            waitfortarget 5000
+            target! 'bankrune'
+            pause 2000
+        endif
+
+        // check if we are at bank
+        if @inrange 'banker' 30
+            resync
+            msg "bank"
+            pause 2000
+            msg "bank"
+            pause 2000
+            @useobject 'bankbag'
+            pause 2000
+            //
+            // Reg restocking is extremely unreliable!
+            //
+            for 0 to 'scriptregs'
+                removetimer 'restock'
+                createtimer 'restock'
+                while counttype scriptregs[] 'any' 'backpack' < 10
+                    sysmsg "restocking reagent"
+                    movetype scriptregs[] 'bankbag' 'backpack' 0 0 0 'any' 10
+                    pause 1500
+                    if timer 'restock' > 30000
+                        sysmsg "I cannot restock the script regs" 44
+                        warmode 'off'
+                        stop
+                    endif
+                endwhile
+            endfor
+            pushlist 'actions' 'train'    
+            continue
+        else
+            sysmsg "Either start at bank or start with scriptregs in pack to recall to bank" 44
+            warmode 'off'
+            stop
+        endif
+    endif
+
+    // 
+    // Buff check
+    // 
+    if not @inlist! 'actions' 'buff'
+        if not buffexists 'Arcane Empowerment'
+            //
+            // Walk 2 spaces away from dummy before recalling to buff
+            //
+            walk "South"
+            walk "South"
+            @clearlist 'actions'
+            pushlist 'actions' 'buff'
+            continue
+        endif
+    endif
+
+    //
+    // Get buff
+    //
+    if @inlist! 'actions' 'buff'
+        sysmsg "Getting skill buff" 88
+        pause 200
+        @clearlist 'actions'
+        // mana to recall
+        while mana < 15
+            useskill 'meditation'
+            pause 6000
+        endwhile
+        // recall
+        @canceltarget
+        cast "Recall"
+        waitfortarget 5000
+        target! 'birdrune'
+        pause 2000
+        // mana to cast lightning
+        while mana < 15
+            useskill 'meditation'
+            pause 6000
+        endwhile
+        // get buff
+        while not buffexists 'Arcane Empowerment'
+            sysmsg "Looking for a bird to kill"
+            removelist 'birds'
+            createlist 'birds'
+            pushlist 'birds' '0x6'
+            @canceltarget
+            cast 'Lightning'
+            waitfortarget 5000
+            while @targetexists
+                for 0 to 'birds'
+                    if @findtype birds[] 'any' 'ground' 12
+                        target! 'found'
+                        @ignoreobject 'found'
+                    endif
+                    pause 100
+                endfor
+            endwhile
+            pause 2000
+        endwhile
+        // mana to recall
+        while mana < 15
+            useskill 'meditation'
+            pause 6000
+        endwhile
+        @pushlist 'actions' 'recalltrain'
+        continue
+    endif
+
+    //
+    // Recall train
+    //
+    if @inlist! 'actions' 'recalltrain'
+        sysmsg "Heading to training spot" 88
+        pause 200
+        @clearlist 'actions'
+        // mana to recall
+        while mana < 15
+            useskill 'meditation'
+            pause 6000
+        endwhile
+        // recall
+        @canceltarget
+        cast "Recall"
+        waitfortarget 5000
+        target! 'bankrune'
+        pause 2000
+        pushlist 'actions' 'train'  
+        continue
+    endif
+
+    // 
+    // Train
+    // 
+    if @inlist! 'actions' 'train'
+        pause 200
+        @clearlist 'actions'
+        //
+        // INSERT TRAINING SEQUENCE HERE
+        //
+        // START > 
+        // Arm weapon
+        if not @findlayer 'self' 1
+            for 0 to 'weps'
+                if @findtype weps[] 'any' 'backpack'
+                    @equipitem 'found' 1
+                    pause 1000
+                    break
+                endif
+            endfor
+        endif
+    
+        // Weapon check
+        if not @findlayer 'self' 1
+            headmsg " I have no weapons" 44
+            warmode 'off'
+            stop
+        endif        
+
+        // Bandage check
+        if counttype '0xe21' 'any' 'backpack' == 0
+            warmode 'off'
+            sysmsg "No bandages!" 44
+            stop
+        endif
+
+        // Dummy check and attack
+        if @inrange 'traindummy' 1
+            attack! 'traindummy'
+            @clearjournal
+            @removetimer 'healing'
+            @createtimer 'healing'
+            @canceltarget
+            usetype 0xe21 'any' 'backpack'
+            waitfortarget 5000
+            target! 'traindummy'
+
+            // Commence healing, max 20 seconds allowed
+            while timer 'healing' < 20000
+                if @injournal 'heal' 'system'
+                    break
+                endif
+                if @injournal 'cure' 'system'
+                    break
+                endif
+                if @injournal 'finish' 'system'
+                    break
+                endif
+                if timer 'healing' > 15000
+                    break
+                endif
+            endwhile
+
+        else
+            headmsg "Where is my training dummy?" 44            
+            warmode 'off'
+            stop
+        endif
+
+        msg "guards"
+        // < END
+        pushlist 'actions' 'train'
+    endif
+
+    //
+    // Server save fix
+    // 
+    pushlist 'actions' 'train'
+
+    pause 200
+
+endwhile

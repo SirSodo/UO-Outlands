@@ -1,0 +1,177 @@
+/////////////////////////////////////////////
+// UO Steam Mining Macro
+// for Outlands
+//
+// * just mines ore, nothing else
+// * clicks ore in case you near forge
+// * loads packhorse with ore, if found
+//
+// Version 1.0
+// -----------
+// First release
+//
+// Version 1.1
+// -----------
+// Added PK detection and warnings. To use this
+// activate your tracking and set to [REDS]
+//
+// Version 1.2
+// -----------
+// Added ability to use a pack horse
+//  - Remember if you lose packhorse, reset objects
+// Automatically recalls you if a PK is detected
+// - Write and save a script named 'recall' if you want to use this
+// Detects if you are moving while trying to mine
+// - Script yells at you to STOP
+//
+/////////////////////////////////////////////
+sysmsg "UO Outlands Miner script" 88
+sysmsg "Version 1.2" 88
+@useobject 'backpack'
+pause 1000
+//
+// Prompt for pack horse/llama
+//
+if not @findalias 'Packy'
+  sysmsg "Pack animals are optional"
+  promptalias 'Packy'
+endif
+//
+// Clear hands
+//
+clearhands 'both'
+pause 1000
+//
+// Whistle timer
+//
+removetimer 'whistle'
+createtimer 'whistle'
+//
+// Clear alias (possibly other macros)
+//
+@unsetalias 'PickAxe'
+//
+// Create Messages list
+//
+@removelist 'Messages'
+@createlist 'Messages'
+//
+// While alive
+//
+while hits > 0
+  @clearjournal
+  //
+  // Gump detect
+  //
+  while gumpexists 'any'
+    headmsg "answer gump"
+    pause 2000
+  endwhile
+
+  //
+  // Transfer to pack horse if found
+  //
+  if diffweight < 30
+    if findalias 'Packy'
+      @movetype 0x19b9 'backpack' 'Packy'
+      pause 1000
+    endif
+  endif
+  //
+  // Auto smelt if near forge
+  //
+  if diffweight < 30
+    while @findtype 0x19b9 'any' 'backpack'
+      useobject 'found'
+      pause 1000
+      ignoreobject 'found'
+    endwhile
+  endif
+  //
+  // If still too heavy, need player help
+  //
+  while diffweight < 10
+    headmsg 'I am too heavy, please unload me' '23'
+    pause 2000
+  endwhile
+  //
+  // Check holding pickaxe
+  //
+  if not @findlayer 'self' 1
+    pause 1000
+    @unsetalias 'Pickaxe'
+  endif
+  //
+  // Equip pickaxe or stop with msg
+  //
+  if not findalias 'Pickaxe'
+    if @findtype 0xe86 'any' 'backpack'
+      @setalias 'Pickaxe' 'found'
+      // This equips it
+      useobject 'Pickaxe'
+      pause 1000
+    else
+      headmsg 'No Pickaxe found' '55' 'self'
+      stop
+    endif
+  endif
+  if counttype '0xe86' 'any' 'backpack' == 0
+    sysmsg "On last Pick!" 38
+  endif
+  @canceltarget
+  //
+  // Mine ore
+  //
+  useobject 'Pickaxe'
+  waitfortarget 1000
+  target! 'self'
+  pause 100
+  // Wait for results
+  for 21
+    if @injournal 'You dig' 'system'
+      break
+    elseif @injournal "You loosen" "system"
+      break
+    elseif @injournal "moved too far" "system"
+      headmsg "STOP!" 66
+      break
+    elseif @injournal "You find" "system"
+      msg "well look at that..."
+      break
+    elseif @injournal "harvestable" "system"
+      headmsg 'Find a new spot' '43'
+      pause 1000
+      break
+    elseif not @findlayer 'self' 1
+      headmsg 'NO PICK EQUIPPED' '23'
+      break
+    else
+      pause 100
+    endif
+  endfor
+  //
+  // Whistle
+  //
+  if timer 'whistle' > 20000
+    emotemsg 'whistles'
+    settimer 'whistle' 0
+  endif
+
+  //
+  // Proximity Detect
+  //
+  @getenemy 'murderer' 'innocent' 'enemy' 'criminal' 'gray' 'humanoid' 
+  if @findobject 'enemy' and @inrange 'enemy' 25
+    playmacro 'Recall'
+    stop
+  endif
+
+  //
+  // PK Detect
+  //
+  if @injournal "now tracking" 'system'
+    headmsg "PK PK PK!" 22
+    playmacro 'Recall'
+    stop
+  endif
+endwhile

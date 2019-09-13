@@ -1,0 +1,63 @@
+/////////////////////////////////////////////
+// UO Steam Bandage macro 
+// 
+// * loops bandaging self
+// * warns if bandages low
+// * warns if bandages out
+// 
+/////////////////////////////////////////////
+
+// Create healing timer
+removetimer 'healing'
+createtimer 'healing'
+
+while not dead
+
+    //
+    // Bandage check
+    //
+    if counttype '0xe21' 'any' 'backpack' == 0
+        sysmsg "No bandages!" 38
+        pause 2000
+        continue
+    endif
+
+    //
+    // Low bandage warning
+    //
+    if counttype '0xe21' 'any' 'backpack' < 20
+        sysmsg "Low on bandages" 55
+    endif
+
+    ///
+    /// Healing
+    ///
+    if poisoned 'self' or diffhits > 5
+
+        settimer 'healing' 0
+        headmsg "(bandaging)" 67
+        bandageself
+        clearjournal
+
+        // Loop until finished healing or 15s is reached
+        while not dead
+            pause 200
+            if @injournal 'heal' 'system'
+                break
+            endif
+            if @injournal 'cure' 'system'
+                break
+            endif
+            if @injournal 'finish' 'system'
+                break
+            endif
+            if timer 'healing' > 15000
+                break
+            endif
+        endwhile
+
+    endif
+
+    pause 1000
+
+endwhile

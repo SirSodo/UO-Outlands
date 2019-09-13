@@ -1,0 +1,57 @@
+/////////////////////////////////////////////
+// UO Steam Camping Training Macro
+// for Outlands
+//
+// Camping gains passively while you are creating it
+// so this macro will pause until your camp is secure
+// rather than burning through kindling nonstop.
+//
+/////////////////////////////////////////////
+
+// Create camping timer
+removetimer 'camp'
+createtimer 'camp'
+
+//
+// While alive
+//
+while hits > 0
+
+    @clearjournal
+
+    //
+    // Check we have kindling
+    //
+    if not @findtype '0xde1' 'any' 'backpack'
+        headmsg 'No kindling!' '55' 'self'
+        stop    
+    endif
+
+    //
+    // Use kindling
+    //
+    settimer 'camp' 0
+    @findtype '0xde1' 'any' 'backpack'
+    @useobject 'found'
+    pause 500
+
+    //
+    // Go past failure
+    //
+    if @injournal 'fail to ignite' 'system'
+        sysmsg "fail to ignite"
+        pause 5000
+        continue
+    endif
+
+    //
+    // Limit 35 seconds on camp attempt
+    //
+    while timer 'camp' < 35000
+        if @injournal 'secure' 'system'
+            break
+        endif
+        pause 1000
+    endwhile
+
+endwhile

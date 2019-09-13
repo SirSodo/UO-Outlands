@@ -1,0 +1,79 @@
+/////////////////////////////////////////////
+// UO Steam Attack Closest Macro
+// for Outlands
+//
+// Notes:
+//
+// Outlands server does not support 'nearest'
+// or 'closest' filters, making this type of
+// macro very difficult. However, we can work
+// around that (below).
+//
+// Version History:
+// * 1.0 initial release
+//
+/////////////////////////////////////////////
+
+//
+// Run search loop for all targets and insert into list
+// This is a 1 second scan of everything around player
+// 
+@removetimer 'search'
+@createtimer 'search'
+@removelist 'found'
+@createlist 'found'
+while timer 'search' < 1000
+    @unsetalias 'enemy'
+    @getenemy 'enemy' 'gray' 'criminal' next
+    @pushlist! 'found' 'enemy'
+endwhile
+@removetimer 'search'
+
+//
+// Create a distances list, seeding from 1
+// 
+@removelist 'distances'
+@createlist 'distances'
+pushlist 'distances' 1
+pushlist 'distances' 2
+pushlist 'distances' 3
+pushlist 'distances' 4
+pushlist 'distances' 5
+pushlist 'distances' 6
+pushlist 'distances' 7
+pushlist 'distances' 8
+pushlist 'distances' 9
+pushlist 'distances' 10
+pushlist 'distances' 11
+pushlist 'distances' 12
+pushlist 'distances' 13
+pushlist 'distances' 14
+pushlist 'distances' 15
+
+//
+// Sort by distance
+// with closest first
+//  
+@removelist 'targets'
+@createlist 'targets'
+for 0 to 'distances'
+    for 0 to 'found'
+        if @findobject found[] 0 0 0 distances[]
+            @pushlist! 'targets' found[]
+        endif
+    endfor
+endfor
+
+//
+// Attack if we see targets
+//
+if list 'targets' > 1
+    headmsg "*Attacking*" 22
+    setalias 'enemy' targets[0]
+    if not war 'self'
+      warmode 'on'
+    endif
+    attack! targets[0]
+else
+    headmsg "No targets" 44
+endif

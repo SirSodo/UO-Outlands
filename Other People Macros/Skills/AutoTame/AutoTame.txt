@@ -1,0 +1,115 @@
+// AutoTame v1.1
+// Written by: a rideable llama
+////////////////
+//Define the tank pet
+if not listexists 'Tankpet'
+  sysmsg 'Please select your tanking pet
+  promptalias 'Tankpet'
+  createlist 'Tankpet'
+endif
+//Clear taming alias
+@cleartargetqueue
+@unsetalias 'pet'
+@createlist 'pets'
+@clearlist 'pets'
+//Heals pet even if there's no tame target (just in case something else aggros)
+if maxhits 'Tankpet' > diffhits 'Tankpet'
+  if inrange 'Tankpet' 1
+    headmsg 'Healing Tankpet'
+    bandage
+    autotargetobject 'Tankpet'
+    pause 6000
+  endif
+endif
+//Clears target queue from previous heal
+@cleartargetqueue
+//Define graphics of the pets you wish to tame
+//Shallow Water (50.0 - 52.5)
+pushlist 'pets' 0x33
+//Sand Crab (55.0 - 70.0)
+pushlist 'pets' 0x2d9
+//Cave Bear (60.0 - 62.5)
+pushlist 'pets' 0xd5
+//Carrion Beetle (65.0 - 67.5)
+pushlist 'pets' 0xa9
+//Scarab (70.0 - 72.5)
+pushlist 'pets' 0xa9
+//Drake Whelp (75.0 - 77.5)
+pushlist 'pets' 0x2ce
+//Bullvore (80.0 - 82.5)
+pushlist 'pets' 0x2cb
+//Drake (85.0 - 87.5)
+pushlist 'pets' 0x3c
+pushlist 'pets' 0x3d
+//Husk Crab (90.0 - 92.5)
+pushlist 'pets' 0x2d9
+//Molten Mongbat (95.0 - 97.5)
+pushlist 'pets' 0x27
+//Snow Drift (100.0 - 102.5)
+pushlist 'pets' 0x33
+//Earth Drake (105.0 - 107.5)
+pushlist 'pets' 0x3c
+pushlist 'pets' 0x3d
+//Aegis Minion (110.0 - 112.5)
+pushlist 'pets' 0x308
+//Earth Dragon (115.0 - 117.5)
+pushlist 'pets' 0x3a
+pushlist 'pets' 0x3b
+// Search
+if not @findobject 'pet'
+  for 0 to 'pets'
+    if @findtype 'pets[]' 'any' 'ground'
+      @setalias 'pet' 'found'
+      break
+    endif
+  endfor
+endif
+// tame
+if @inrange 'pet' 7
+  headmsg 'Taming Pet'
+  clearjournal
+  useskill 'animal taming'
+  waitfortarget 1000
+  target! 'pet'
+  pause 1000
+  // wait for tame, heal tank pet
+  while name 'pet' != 'killme'
+    useskill 'animal taming'
+    waitfortarget 1000
+    target! 'pet'
+    pause 1000
+    if maxhits 'Tankpet' > diffhits 'Tankpet'
+      if inrange 'Tankpet' 1
+        headmsg 'Healing Tankpet'
+        bandage
+        autotargetobject 'Tankpet'
+        pause 6000
+        bandage
+        autotargetobject 'Tankpet'
+      endif
+    endif
+    pause 6000
+    @rename 'pet' 'killme'
+  endwhile
+  // kill
+  while target 'pet' name 'killme'
+    headmsg 'Killing Pet'
+    msg "all kill"
+    waitfortarget 5000
+    target! 'pet'
+    attack! 'pet'
+    pause 5000
+    if maxhits 'Tankpet' > diffhits 'Tankpet'
+      if inrange 'Tankpet' 1
+        headmsg 'Healing Tankpet'
+        bandage
+        autotargetobject 'Tankpet'
+        pause 6100
+      endif
+    endif
+    @unsetalias 'pet'
+    replay
+    pause 1000
+  endwhile
+endif
+@unsetalias 'pet'

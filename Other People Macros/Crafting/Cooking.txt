@@ -1,0 +1,41 @@
+/////////////////////////////////////////////
+// UO Steam Cooking Macro
+// for Outlands
+// by Jewele
+// 
+// Uses frying pans to cook last item you made.
+// 
+// How to use?
+// -----------
+// 1) Stock pack with ingredients and frying pans
+// 2) Make 1 item appropriate to your skill
+// 5) Run script
+//
+// Version 1.0
+// -----------
+// First release
+//
+// UOSTEAM COPY-PASTE BELOW THIS LINE
+/////////////////////////////////////////////
+
+sysmsg "Cooking script" 88
+sysmsg "Version 1.0" 88
+//
+// Open backpack
+//
+@useobject 'backpack'
+pause 1000
+
+while not dead
+
+  if not @findtype 0x97f 'any' 'backpack'
+      headmsg "I need a frying pan!" 91
+      stop
+  endif
+
+  usetype 0x97f 'any' 'backpack'
+  waitforgump 0x38920abd 5000
+  replygump 0x38920abd 7
+  pause 2000
+
+endwhile
