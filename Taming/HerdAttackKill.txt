@@ -4,6 +4,8 @@
 //  kill, then attack, then herd.   //
 // Edit bottm line to start AutoVet //
 //////////////////////////////////////
+cancelautotarget 
+canceltarget 
 headmsg "Target what you want to die" 38
 promptalias killkillkill
 pause 250
@@ -22,6 +24,8 @@ if usetype '0xe81' any backpack
   target! killkillkill
 endif
 @unsetalias killkillkill
+cancelautotarget 
+canceltarget 
 // Next line automatically plays the macro AutoVet, edit out // if you want this to happen
 //playmacro AutoVet
 
