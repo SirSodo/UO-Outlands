@@ -1,0 +1,78 @@
+////////////////////////////////////
+//  Sir Sodomizer's Auto Vet 3.2  //
+//  ~!~ Single Pet Variation ~!~  //
+// If buggy turn off other sysmsg //
+// like damage&skill gain chances //
+////////////////////////////////////
+// Bandage check
+if @counttype '0xe21' 'any' 'backpack' < 20
+  headmsg "Low bandages! Checking pack" 38
+  useobject backpack
+  pause 650
+endif
+// Looks for your tank pet
+if not @distance 'TankPet' < 18
+  headmsg "Target your tank pet" 38
+  promptalias 'TankPet'
+endif
+// Checks
+if @timerexists 'bandage' and @timer 'bandage' < 20000
+  headmsg "Resuming Single Vet Macro" 38
+else
+  headmsg "Starting Single Vet Macro" 38
+  @removetimer 'bandage'
+endif
+///////////
+while not dead
+  // Stops if you have no bandages
+  if counttype '0xe21' 'any' 'backpack' < 1
+    headmsg "No bandages!" 38
+    stop
+  endif
+  // If not bandaging
+  if @timerexists 'bandage'
+    // Scans system message for healing messages
+    if @injournal "finish applying" 'system' or @injournal "not damaged" 'system'
+      // Low bandage warning
+      if @counttype '0xe21' 'any' 'backpack' < 20
+        headmsg "Low bandages!" 38
+      endif
+      @removetimer "Bandage"
+      pause 150
+    elseif @injournal "close enough" 'system' or @injournal "little damage" 'system'
+      @removetimer "Bandage"
+      pause 150
+      // Timeout of 20s. 5s save + 8s bandage + 7s push
+    elseif @timer "Bandage" > 20000 or @injournal "resurrect" 'system'
+      @removetimer "Bandage"
+      pause 150
+    endif
+  else
+    // If more than 19% damaged or poisoned
+    if @diffhits 'TankPet' > 19 or @poisoned 'TankPet''
+      // If the pet is 1 tile away
+      if @inrange 'TankPet' 1
+        @createtimer 'bandage'
+        // Pushes timer to 7s, since timeout is 20s due to healing
+        @settimer 'bandage' 7000
+        @clearjournal
+        // Vets pet
+        bandage 'TankPet'
+        pause 200
+        // Double check to make sure you weren't busy
+        if @injournal "perform" 'system'
+          pause 300
+          bandage 'TankPet'
+          @clearjournal
+          // Pushes timer to 7s, since timeout is 20s due to healing
+          @settimer 'bandage' 7000
+        endif
+        // If pet is more than 1 tile away
+      else
+        headmsg "Pet too far to heal" 38
+        pause 2000
+      endif
+    endif
+  endif
+endwhile
+

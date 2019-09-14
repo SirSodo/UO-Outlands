@@ -1,0 +1,144 @@
+////////////////////////////////////
+//  Sir Sodomizer's Auto XP 1.0  //
+// If buggy turn off other sysmsg //
+// like damge & skill gain chance //
+////////////////////////////////////
+@createlist Kill
+@clearlist Kill
+@pushlist Kill 0x85 // Monitor
+@pushlist Kill 0xc7 // Living Water
+// No Editing Below this Line
+createtimer GuardMe
+// Bandage check
+if @counttype '0xe21' 'any' 'backpack' < 20
+  headmsg "Low bandages! Checking pack" 38
+  useobject backpack
+  pause 650
+endif
+// Checks to see if a list of pets exist
+if not listexists pets
+  // If it doesn't find them it creates new set of pets
+  @createlist pets
+  @clearlist pets
+  // Loop 5 times, or until escape gets hit
+  for 5
+    headmsg "Select pet, or ESC to stop" 38
+    promptalias 'pet'
+    // If you selected a pet it gets added to the list
+    if @findobject 'pet'
+      pushlist pets 'pet'
+    else
+      // If you hit escape it bails this for loop
+      break
+    endif
+  endfor
+endif
+@pushlist 'pets' 0x287e0 // Tanky the scarab
+@pushlist 'pets' 0x1ceab // Dragy the dragon
+@createlist 'HealIt'
+@clearlist 'HealIt'
+///////////
+while not dead
+  for 0 to Kill
+    @findtype Kill[] any ground any
+    if @inrange 'found' 9
+      attack found
+      msg "all guard"
+      @ignoreobject found
+      @unsetalias found
+      pause 500
+      break
+    endif
+  endfor
+  if diffhits > 0 and timer guardme > 30000
+    createtimer Guardme
+    msg "all guard"
+  endif
+  // If not bandaging
+  if @timerexists 'bandage'
+    // Scans system message to see if you've finished
+    if @injournal "finish applying" 'system' or @injournal "not damaged" 'system'
+      if @counttype '0xe21' 'any' 'backpack' < 20
+        headmsg "Low bandages!" 38
+      endif
+      if skill herding == 0
+        waitforcontext 'HealIt[0]' 3 5000
+      else
+        waitforcontext 'HealIt[0]' 4 5000
+      endif
+      @removetimer "Bandage"
+      pause 150
+    elseif @injournal "close enough" 'system' or @injournal "little damage" 'system'
+      @removetimer "Bandage"
+      pause 150
+    elseif @timer "Bandage" > 20000 or @injournal "resurrect" 'system'
+      @removetimer "Bandage"
+      pause 150
+    endif
+  else
+    @createlist 'HealIt'
+    @clearlist 'HealIt'
+    pause 150
+    for 0 to pets
+      if @inrange pets[] 18
+        if list 'HealIt' < 1
+          pushlist 'HealIt' pets[]
+        endif
+        if diffhits pets[] > diffhits HealIt[0]
+          @clearlist HealIt
+          @pushlist 'HealIt' pets[]
+        endif
+      endif
+    endfor
+    if diffhits > 15 and skill healing > 29
+      if not hidden
+        @createtimer 'bandage'
+        headmsg "Bandaging" 38
+        @clearjournal
+        bandageself
+        pause 200
+        // Double check to make sure you weren't busy
+        if @injournal "perform" 'system'
+          pause 300
+          bandageself
+          @clearjournal
+          @settimer 'bandage' 0
+        endif
+      endif
+    elseif @diffhits 'HealIt[0]' > 19 or @poisoned 'HealIt[0]'
+      if @distance 'HealIt[0]' > 1
+        if skill herding == 0
+          waitforcontext 'HealIt[0]' 4 5000
+        else
+          waitforcontext 'HealIt[0]' 5 5000
+        endif
+        pause 2000
+      endif
+      // If the pet is 1 tile away
+      if @inrange 'HealIt[0]' 1
+        @createtimer 'bandage'
+        @settimer 'bandage' 7000
+        @clearjournal
+        // Vets pet
+        bandage 'HealIt[0]'
+        pause 200
+        // Double check to make sure you weren't busy
+        if @injournal "perform" 'system'
+          pause 300
+          bandage 'HealIt[0]'
+          @clearjournal
+          // Pushes timer to 7s, since timeout is 20s due to healing
+          @settimer 'bandage' 7000
+        endif
+      else
+        headmsg "Pet too far to heal" 38
+        pause 2000
+      endif
+    endif
+  endif
+  if counttype '0xe21' 'any' 'backpack' < 1
+    headmsg "No bandages!" 38
+    stop
+  endif
+endwhile
+

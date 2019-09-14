@@ -1,0 +1,58 @@
+////////////////////////////////////
+// Sir Sodomizer's TMaps Decipher //
+// Put map and spyglasses in pack //
+// Once you hit play it goes 'til //
+// all map in pack are deciphered //
+////////////////////////////////////
+headmsg "Will decode all maps in your pack" 38
+// Finds map
+while @findtype 0x14ec any backpack
+  @setalias DecodeMe found
+  @createlist gump
+  @clearlist gump
+  // This section right here chooses the appropriate gump for type of map
+  // Treasure maps
+  if @findobject DecodeMe 0 backpack
+    @pushlist gump 0x5aa6a1db
+    // Skinning maps
+  elseif @findobject DecodeMe 2651 backpack
+    @pushlist gump 0xcf023875
+    // Ore Map
+  elseif @findobject DecodeMe 2796 backpack
+    @pushlist gump 0xc8ba218c
+    // Lumber Map
+  elseif @findobject DecodeMe 2799 backpack
+    @pushlist gump 0x4f70ff19
+    // Fishing Map
+  elseif @findobject DecodeMe 2904 backpack
+    @pushlist gump 0x9a567776
+  endif
+  // Attempts to use any spyglass in pack
+  if not usetype 0x14f5 any backpack
+    headmsg "No spyglasses found in pack" 38
+    stop
+  endif
+  waitfortarget 5000
+  target! DecodeMe
+  @clearjournal
+  waitforgump gump[0] 5000
+  // While you still have spyglasses and until you're told you maxed out, loop.
+  while not @injournal "maximum accuracy" system and @findtype 0x14f5 any backpack
+    replygump gump[0] 4
+    waitforgump gump[0] 5000
+    // If 0.0% chance of decoding it skips the map
+    if @injournal "no chance of deciphering" system
+      headmsg "Map too hard, skipping" 38
+      break
+    endif
+    pause 1900
+  endwhile
+  // Close gump
+  replygump gump[0] 0
+  // Ignore and unset so it won't try again
+  @ignoreobject DecodeMe
+  @unsetalias DecodeMe
+  headmsg "Decoded" 38
+  pause 650
+endwhile
+

@@ -1,5 +1,8 @@
 As of now they are player steered macros, more of an assistant. They swing tools, replace broken tools, pause for macro checks, alert for PK's (uses tracking if your skill is above 34), and while mining loads up a pack animal
 
+***********LumberjackAuto***********
+Moves around in a circle-ish, otherwise same as lumberjack manual
+
 ***********LumberjackManual***********
 Simple assistant, no edits needed
 

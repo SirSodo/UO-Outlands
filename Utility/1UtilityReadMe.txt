@@ -1,5 +1,8 @@
 Catch all for scripts that don't go somewhere else
 
+***********CartogMapDecoder***********
+Throw a ton of tmaps (lumber, ore, skin, fish good too) and spyglasses in your pack and this will take care of all of them. 
+
 ***********Gate***********
 Well annotated, you should be able to read it. 
 

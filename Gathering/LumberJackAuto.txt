@@ -1,0 +1,249 @@
+/////////////////////////////////////////////
+//      Sir Sodomizer's AutoJack V 1.1     //
+//     Walks in a loop and swings away     //
+//   Notifies and pauses during captchas   //
+// Pauses for saves, grab hatchets and run //
+/////////////////////////////////////////////
+// Debug
+@clearjournal
+@removetimer LJing
+@removelist NearBy
+@createlist NearBy
+@removelist MoveX
+@createlist MoveX
+@removelist MoveY
+@createlist MoveY
+@removelist MoveDo
+@createlist MoveDo
+@pushlist MoveDo MoveWest
+// Opens backpack if no hatchets found
+if not @findtype 0xf44 any backpack
+  useobject backpack
+  pause 650
+endif
+// If you have more than 34 tracking
+if skill "Tracking" > 34
+  // Checks to see if you've used the skill recently
+  if not @timerexists Tracking or @timer Tracking > 9200
+    // Use the skill
+    useskill 'Tracking'
+    waitforgump 0xfe5c638b 15000
+    replygump 0xfe5c638b 8
+    waitforgump 0xfe5c638b 15000
+    while not @injournal "hunt all hostile"  system
+      @clearjournal
+      replygump 0xfe5c638b 7
+      waitforgump 0xfe5c638b 15000
+      pause 250
+    endwhile
+    // If it says begin hunting in tracking menu
+    if @ingump 0xfe5c638b "Begin Hunting"
+      // Hit the button
+      replygump 0xfe5c638b 6
+      waitforgump 0xfe5c638b 5000
+    endif
+    // Close tracking menu
+    replygump 0xfe5c638b 0
+    @createtimer Tracking
+  endif
+endif
+while not dead
+  // Keeps working as long as world save isn't happening
+  while not @injournal "world is saving" system
+    // If LJing was not started, or it took longer than 7 seconds
+    if not timerexists LJing or timer LJing > 7000
+      @clearjournal
+      // Use Hatchet
+      if not @useobject lefthand
+        // Check for hatchets in pack
+        if not @findtype 0xf44 any backpack
+          headmsg "No hatchets!" 38
+          playsound 1086
+          stop
+        else
+          // Put it in your hands and uses it
+          equipitem found 2
+          pause 1000
+          @useobject lefthand
+        endif
+      endif
+      waitfortarget 1000
+      // while Macrocheck then makes a sound and waits 5s
+      while @ingump any "Captcha"
+        playsound 1095
+        pause 5000
+      endwhile
+      // After macrocheck
+      @createtimer LJing
+      target! self
+      pause 500
+    endif
+    if @injournal "world is saving" system
+      break
+      // Makes sure a hatchet is being used
+    elseif @injournal "hatchet" system
+      @clearjournal
+      warmode on
+      warmode off
+      clearhands both
+      @removetimer LJing
+      pause 1000
+    elseif @injournal chop system or @injournal fail system
+      removetimer LJing
+      // If no tree around it tries again 2 more times
+    elseif @injournal nearby system
+      @clearjournal
+      pushlist NearBy 1
+      settimer LJing 6500
+    endif
+    if @injournal "Now Tracking" system
+      playsound 1069
+      headmsg "PK, RUN!" 38
+      pause 10000
+    endif
+    // Damage / Enemy alert, then pause 10s
+    @getenemy 'any'
+    if murderer enemy or criminal enemy
+      playsound 1088
+      headmsg "PK, RUN!" 38
+      pause 10000
+    endif
+    if diffhits > 0
+      playsound 1088
+      headmsg "You're under attack" 38
+      pause 10000
+    endif
+    if list NearBy > 2
+      settimer LJing 5000
+      @clearlist NearBy
+      @clearjournal
+      // Move starts here
+      if @inlist MoveDo MoveWest
+        @pushlist MoveX 1
+        turn South
+        walk South
+        turn West
+        walk West
+        turn North
+        walk North
+        turn West
+        walk West
+        turn North
+        walk North
+        turn West
+        walk West
+        turn South
+        walk South
+      elseif @inlist MoveDo MoveEast
+        @pushlist MoveX 1
+        turn South
+        walk South
+        turn East
+        walk East
+        turn North
+        walk North
+        turn East
+        walk East
+        turn North
+        walk North
+        turn East
+        walk East
+        turn South
+        walk South
+      elseif @inlist MoveDo MoveNorth
+        @pushlist MoveY 1
+        turn West
+        walk West
+        turn North
+        walk North
+        turn East
+        walk East
+        turn North
+        walk North
+        turn East
+        walk East
+        turn North
+        walk North
+        turn West
+        walk West
+      elseif @inlist MoveDo MoveSouth
+        @pushlist MoveY 1
+        turn West
+        walk West
+        turn South
+        walk South
+        turn East
+        walk East
+        turn South
+        walk South
+        turn East
+        walk East
+        turn South
+        walk South
+        turn West
+        walk West
+      endif
+      //
+      if @inlist MoveDo MoveWest
+        if list MoveX > 4
+          @poplist MoveDo MoveWest
+          @pushlist MoveDo MoveNorth
+          @pushlist MoveDo MoveNextEast
+          @clearlist MoveX
+        endif
+      elseif @inlist MoveDo MoveEast
+        if list MoveX > 4
+          @poplist MoveDo MoveEast
+          @pushlist MoveDo MoveSouth
+          @pushlist MoveDo MoveNextEast
+          @clearlist MoveX
+        endif
+      elseif @inlist MoveDo MoveNorth
+        @poplist MoveDo MoveNorth
+        if @inlist MoveDo MoveNextEast
+          @poplist MoveDo MoveNextEast
+          @pushlist MoveDo MoveEast
+          @clearlist MoveX
+        elseif @inlist MoveDo MoveNextWest
+          @poplist MoveDo MoveNextWest
+          @pushlist MoveDo MoveWest
+          @clearlist MoveX
+        endif
+      elseif @inlist MoveDo MoveSouth
+        @poplist MoveDo MoveSouth
+        if @inlist MoveDo MoveNextEast
+          @poplist MoveDo MoveNextEast
+          @pushlist MoveDo MoveEast
+          @clearlist MoveX
+        elseif @inlist MoveDo MoveNextWest
+          @poplist MoveDo MoveNextWest
+          @pushlist MoveDo MoveWest
+          @clearlist MoveX
+        endif
+      endif
+      //
+      if list MoveY > 4
+        headmsg "Done with loop" 38
+        stop
+        // Delete message and stop above to repeat script
+        @clearlist MoveY
+        // Enter recall portion here to move to different area
+      endif
+    endif
+    if diffweight < 12
+      headmsg "Overweight" 38
+      stop
+    endif
+  endwhile
+  // Handles saves
+  headmsg "Pausing For World Save" 38
+  createtimer saving
+  pause 500
+  while not @injournal "save complete" system and timer saving < 20000
+  endwhile
+  removetimer saving
+  headmsg "Save Over" 38
+  @clearjournal
+endwhile
+headmsg "Either dead or overweight" 38
+

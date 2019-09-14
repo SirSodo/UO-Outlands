@@ -4,6 +4,12 @@ Will automatically vet whichever pet is lowest % hp, but if that pet is more tha
 ***********AutoVetHeal***********
 Same as above but it bandages you too. You heal when more than 15% damage is done, change if diffhits > 15 and skill healing > 29
 
+***********AutoVetSingle***********
+Heals only a single pet, good to switch to when you want to focus on tank pet and other pets are dead
+
+***********AutoXPHeal***********
+Pet leveler, still in beta stage. Add things to the kill list. It will find things in the list and attack them, then call out all guard. If a pet is low on hp it brings it back to you, vets, then sends it out to guard again.
+
 ***********HerdAttackKill***********
 Pretty self explanatory, great for archer tamers. At the bottom edit out // to have it automatically goto your autovet macro.
 
