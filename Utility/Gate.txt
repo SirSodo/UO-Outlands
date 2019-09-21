@@ -26,8 +26,7 @@ if @findtype 0xf6c 'any' 'ground' 'any' '2'
     // Selects travel
     replygump 0xe0e675b8 2
   endif
-  // Otherwise if it found a gate but it's too far
-  // Macro did not find a gate
+  // Macro did not find a gate within 2 tiles
 else
   headmsg 'No Gate Found' 38
 endif
