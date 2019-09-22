@@ -18,14 +18,17 @@ while @findtype '0xcf' 'any' 'ground' '1' '2'
     pause 250
   endwhile
 endwhile
-// If have skinning knife and corpse on ground
-if @findtype 0x2d20 'any' backpack and @findtype '0x2006' 'any' 'ground' '1' '2'
-  useskill 'Forensic Evaluation'
-  waitfortarget 5000
-  target! 'self'
-  while @ingump any "Captcha"
-    pause 250
-  endwhile
+// If corpse or skinning map
+if @findtype 0x7136 'any' 'ground' '1' '2' or @findtype '0x2006' 'any' 'ground' '1' '2'
+  // If skinning knife in pack
+  if @findtype 0x2d20 any backpack
+    useskill 'Forensic Evaluation'
+    waitfortarget 5000
+    target! 'self'
+    while @ingump any "Captcha"
+      pause 250
+    endwhile
+  endif
 endif
 // Loops while there is wool in your backpack
 while @findtype 0xdf8 any backpack
