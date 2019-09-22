@@ -4,7 +4,24 @@
 // Once you hit play it goes 'til //
 // all map in pack are deciphered //
 ////////////////////////////////////
-headmsg "Will decode all maps in your pack" 38
+// Sets a % to stop the decoding. I don't mind 94% decoded
+// If you want 100% Map Accuracy edit these out.
+@createlist 'Accuracy'
+@clearlist 'Accuracy'
+@pushlist 'Accuracy' 94
+@pushlist 'Accuracy' 95
+@pushlist 'Accuracy' 96
+@pushlist 'Accuracy' 97
+@pushlist 'Accuracy' 98
+@pushlist 'Accuracy' 99
+// Selects where to place decoded maps
+if not @listexists 'DecodedStorage'
+  headmsg "Select tome or container to place decoded maps into" 38
+  promptalias 'DecodesGo'
+  @createlist 'DecodedStorage'
+  @clearlist 'DecodedStorage'
+  @pushlist 'DecodedStorage' 'DecodesGo'
+endif
 // Finds map
 while @findtype 0x14ec any backpack
   @setalias DecodeMe found
@@ -33,16 +50,35 @@ while @findtype 0x14ec any backpack
     stop
   endif
   waitfortarget 5000
-  target! DecodeMe
+  target! 'DecodeMe'
   @clearjournal
   waitforgump gump[0] 5000
   // While you still have spyglasses and until you're told you maxed out, loop.
-  while not @injournal "maximum accuracy" system and @findtype 0x14f5 any backpack
+  while @findtype 0x14f5 any backpack
     replygump gump[0] 4
     waitforgump gump[0] 5000
+    // Accuracy loop. Will restart macro if it hits % on list
+    for 0 to 'Accuracy'
+      if @ingump gump[0] 'Accuracy[]'
+        headmsg "Mostly Decoded" 38
+        replygump gump[0] 0
+        // Moves decoded map to chosen container
+        moveitem 'DecodeMe' 'DecodedStorage[0]'
+        // Ignore and unset so it won't try again
+        @ignoreobject DecodeMe
+        @unsetalias DecodeMe
+        pause 1900
+        replay
+      endif
+    endfor
     // If 0.0% chance of decoding it skips the map
     if @injournal "no chance of deciphering" system
       headmsg "Map too hard, skipping" 38
+      break
+    elseif @injournal "maximum accuracy" system
+      headmsg "Decoded" 38
+      // Moves decoded map to chosen container
+      moveitem 'DecodeMe' 'DecodedStorage[0]'
       break
     endif
     pause 1900
@@ -52,7 +88,6 @@ while @findtype 0x14ec any backpack
   // Ignore and unset so it won't try again
   @ignoreobject DecodeMe
   @unsetalias DecodeMe
-  headmsg "Decoded" 38
   pause 650
 endwhile
-
+headmsg "All maps decoded" 38
