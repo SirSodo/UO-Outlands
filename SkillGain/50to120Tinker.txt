@@ -75,7 +75,7 @@ while skill tinkering < 120
     // Make key rings
     replygump 0x38920abd 109
     waitforgump 0x38920abd 15000
-    replygump 0x38920abd 207
+    replygump 0x38920abd 208
   elseif skill Tinkering < 120
     // Make Candleabras
     replygump 0x38920abd 9
