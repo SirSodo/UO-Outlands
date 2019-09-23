@@ -4,6 +4,9 @@ IF YOU AREN'T SCROLLED TO 120 YOU NEED TO EDIT THE MACROS! A portion near the to
 
 You can set a secure in your bank, but you would have to have your bank open the entire time the macro is running.
 
+***********50to120Tailor***********
+50-120 can be attained unattended if stash is has enough saws/boards. 
+
 ***********50to120Cartog***********
 50-120 can be attained unattended if stash is has enough pens/maps. 
 Self explanatory and simple but requires a trash can within 2 tiles as well. There are some delays when you have to wait for the trash can to empty, but I didn't want to add/remove trash cans so I just added a wait timer.
@@ -17,6 +20,7 @@ Does not use a secure since you can throw over 3000 raws into your pack. If you'
 
 ***********50to120Tinker***********
 50-120 can be attained unattended if stash is has enough tools/iron. 
+*Updated 2019Sep21, download again if you grabbed it before then
 
 ***********Poisoning***********
 Much human intervention required

@@ -1,0 +1,85 @@
+///////////////////////////////////
+//  Sir Sodomizer's 50-120 Carp  //
+// It crafts, recycles and pulls //
+//  Put SAWS and board in stash  //
+///////////////////////////////////
+if not @distance stash < 3
+  headmsg "Select boards and SAW stash" 38
+  promptalias stash
+endif
+@createlist recycle
+@clearlist recycle
+// EDIT THIS!
+@pushlist recycle 0x13b4 // Clubs
+@pushlist recycle 0xeb2 // Harps
+@pushlist recycle 0x2805 // Flutes
+@pushlist recycle 0x1eba // Repair Kits
+// While below skill level 120
+while skill Carpentry < 120
+  // If fewer than 5 boards in pack move 200
+  if @counttype 0x1bd7 any backpack < 5
+    if @movetype 0x1bd7 stash backpack 0 0 0 0 200
+      pause 1000
+    else
+      headmsg "No boards left in stash" 38
+      stop
+    endif
+  endif
+  // If no saws in pack move 1
+  if not @findtype 0x1034 any backpack
+    if @movetype 0x1034 stash backpack
+      pause 1000
+    else
+      headmsg "No saws left in stash" 38
+      stop
+    endif
+  endif
+  // Use saws
+  @usetype 0x1034 any backpack
+  waitforgump 0x38920abd 5000
+  // Checks if Recycle all is on
+  while not @ingump 0x38920abd "Recycle All (of Type)"
+    // Hits recycle button until recycle all shows up
+    replygump 0x38920abd 2
+    waitforgump 0x38920abd 5000
+    pause 500
+  endwhile
+  for 0 to recycle
+    // Count number of items to recycle
+    if @counttype 'recycle[]' any backpack > 4
+      // Find specific item to recycle
+      @findtype 'recycle[]' any backpack
+      // Hit recycle button
+      replygump 0x38920abd 3
+      waitfortarget 5000
+      target! found
+      // Use saws
+      @usetype 0x1034 any backpack
+      waitforgump 0x38920abd 5000
+    endif
+  endfor
+  if skill Carpentry < 65
+    // Make Clubs
+    replygump 0x38920abd 101
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 200
+  elseif skill Carpentry < 75
+    // Make Harps
+    replygump 0x38920abd 102
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 200
+  elseif skill Carpentry < 100
+    // Make Flutes
+    replygump 0x38920abd 102
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 204
+  elseif skill Carpentry < 120
+    // Make Repair Kits
+    replygump 0x38920abd 103
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 200
+  endif
+  pause 1900
+endwhile
+headmsg "Congrats on hitting 120!" 38
+
