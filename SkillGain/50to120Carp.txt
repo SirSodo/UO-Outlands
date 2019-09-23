@@ -9,7 +9,6 @@ if not @distance stash < 3
 endif
 @createlist recycle
 @clearlist recycle
-// EDIT THIS!
 @pushlist recycle 0x13b4 // Clubs
 @pushlist recycle 0xeb2 // Harps
 @pushlist recycle 0x2805 // Flutes
