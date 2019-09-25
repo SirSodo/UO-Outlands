@@ -1,8 +1,9 @@
 /////////////////////////////////////////
-// Sir Sodomizer's 50-120 Taming V 1.1 //
+// Sir Sodomizer's 50-120 Taming V 1.2 //
 //  Needs veterinary to heal tank pet  //
 // Stand behind tank pet while taming  //
 // If you've healing it heals you too  //
+// Otherwise it tries to use gheal pot //
 // Will auto tame whatever is on list  //
 //  Renames, releases, kills, ignores  //
 // Kills mob when you have maxed gains //
@@ -58,6 +59,7 @@ endif
 // Makes search it can't see your tank during searches
 ignoreobject 'TankPet'
 @createtimer "BandageCheck"
+@createtimer "GHealPot"
 // If you manually restart the macro it starts taming again
 removetimer "Taming"
 @clearjournal
@@ -169,6 +171,27 @@ while skill "Animal Taming" < 120 and not dead
         @clearjournal
         bandage 'TankPet'
         pause 500
+        // More than 10% damage and healing below 29
+      elseif diffhits > 10 and skill healing < 29
+        if @timer "GHealPot" > 10000
+          warmode on
+          warmode off
+          // Herding check, changes context menu
+          if skill herding == 0
+            // Option '4' is 3rd, Guard
+            waitforcontext 'TankPet' 3 15000
+          else
+            // Changes to '5' aka 4th since we have herding
+            waitforcontext 'TankPet' 4 15000
+          endif
+          headmsg "Warning, you are being attacked" 38
+          // Tries to use gheal pots
+          if not @usetype 0xf0c
+            headmsg "No Gheal pots remaining!" 38
+          endif
+          createtimer "GHealPot"
+          @clearjournal
+        endif
       endif
       // If you are bandaging
     else
@@ -276,4 +299,3 @@ while skill "Animal Taming" < 120 and not dead
 endwhile
 headmsg "You are dead, sorry" 38
 logoutbutton
-
