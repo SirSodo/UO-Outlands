@@ -55,6 +55,19 @@ while @findtype 0x14ec any backpack
   waitforgump gump[0] 5000
   // While you still have spyglasses and until you're told you maxed out, loop.
   while @findtype 0x14f5 any backpack
+    if @injournal "not a valid target" system
+      headmsg "Are you trying to decipher blank maps?" 38
+      break
+      // If 0.0% chance of decoding it skips the map
+    elseif @injournal "no chance of deciphering" system
+      headmsg "Map too hard, skipping" 38
+      break
+    elseif @injournal "maximum accuracy" system
+      headmsg "Decoded" 38
+      // Moves decoded map to chosen container
+      moveitem 'DecodeMe' 'DecodedStorage[0]'
+      break
+    endif
     replygump gump[0] 4
     waitforgump gump[0] 5000
     // Accuracy loop. Will restart macro if it hits % on list
@@ -71,16 +84,6 @@ while @findtype 0x14ec any backpack
         replay
       endif
     endfor
-    // If 0.0% chance of decoding it skips the map
-    if @injournal "no chance of deciphering" system
-      headmsg "Map too hard, skipping" 38
-      break
-    elseif @injournal "maximum accuracy" system
-      headmsg "Decoded" 38
-      // Moves decoded map to chosen container
-      moveitem 'DecodeMe' 'DecodedStorage[0]'
-      break
-    endif
     pause 1900
   endwhile
   // Close gump
