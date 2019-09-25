@@ -1,0 +1,84 @@
+///////////////////////////////////
+// Sir Sodomizer's Alch MakeLast //
+// Makes last pot & put into keg //
+// Put tool & keg & regs in pack //
+//  Keep 5 empty bottle in pack  //
+// Edit macro & make potion once //
+// Edit line 17 for reagent type //
+//  Stop when Society completes  //
+// Object Inspector for Graphic  //
+///////////////////////////////////
+@createlist resource
+@clearlist resource
+// Below you change the resource to whatever reg you're using
+// NS= 0xf88 SA= 0xf8c BM= 0xf7b SS= 0xf8d
+// GA= 0xf84 BP= 0xf7a MR= 0xf86 GS= 0xf85
+// EDIT 1 LINE BELOW
+@pushlist 'resource' 0xf88 // Graphic of regs goes here
+// EDIT 1 LINE ABOVE, don't touch below
+@createlist 'pot'
+@clearlist 'pot'
+@pushlist 'pot' 0xf0c // Heal
+@pushlist 'pot' 0xf07 // Cure
+@pushlist 'pot' 0xf0b // Refresh
+@pushlist 'pot' 0xf0a // Poison
+@pushlist 'pot' 0xf0d // Explode
+@pushlist 'pot' 0xf09 // Strength
+@pushlist 'pot' 0xf08 // Agility
+@pushlist 'pot' 0xf06 // Magic Reflect
+if not @distance 'FinishedKegs' < 3
+  headmsg "Where shall I move finished kegs to?" 38
+  promptalias 'FinishedKegs'
+endif
+@clearjournal
+// Will run until you are out of mortar's
+while counttype '0xe9b' any backpack > 0
+  // Searches for society, stops if completed
+  if @injournal "completed a society job" system
+    headmsg "Society job complete, stopping" 38
+    stop
+  endif
+  // Counts regs, currently set to stop if below 10
+  if @counttype 'resource[0]' any backpack < 10
+    // Stops if you are below 10 regs
+    headmsg "More Reagents Needed" 38
+    stop
+  endif
+  // Counts empty bottles
+  if @counttype '0xf0e' any backpack < 1
+    // Stops if you are below 1 empty bottle
+    headmsg "More Empty Bottles Needed" 38
+    stop
+  endif
+  for 0 to 'pot'
+    if not @findobject 'FillKeg'
+      if not @findtype 0x1940 0 backpack
+        headmsg "No more empty kegs" 38
+        stop
+      else
+        @setalias 'FillKeg' found
+      endif
+    endif
+    // Moves potion to keg
+    @movetype 'pot[]' backpack 'FillKeg'
+  endfor
+  // Waits for another 1.0 seconds
+  pause 1000
+  // Check to see if keg full or wrong type
+  if @injournal "keg will not hold" system or @injournal "mix different" system
+    headmsg "Keg finished, moving" 38
+    @moveitem 'FillKeg' 'FinishedKegs'
+    @ignoreobject 'FillKeg'
+    @unsetalias 'FillKeg'
+    @clearjournal
+    pause 1000
+  endif
+  // Uses mortar
+  @usetype '0xe9b' any backpack
+  // Waits for crafting gump to open
+  waitforgump 0x38920abd 5000
+  // Hits "Make Last Item"
+  replygump 0x38920abd 7
+  // Waits 0.9 seconds, edit for lag
+  pause 900
+endwhile
