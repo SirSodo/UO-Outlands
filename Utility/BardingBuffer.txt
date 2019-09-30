@@ -1,0 +1,65 @@
+////////////////////////////////////
+// Sir Sodomizer's Barding Buffer //
+// Macro will make sure you stay  //
+// buffed by Discord/Peace/Provoc //
+// The macro targets blessed item //
+// Will show timers in sysmessage //
+////////////////////////////////////
+// This will search for the object to target
+if not @findobject BuffIt
+  headmsg "Target a blessed item to buff" 38
+  promptalias BuffIt
+endif
+// Creates timer for the buff cooldown
+if not @timerexists BuffPause
+  @createtimer BuffPause
+  @settimer BuffPause 11112
+endif
+// If you're above 34 discord it enables the buff
+if not @timerexists Disco and skill 'Discordance' > 34
+  @createtimer Disco
+  @settimer Disco 333333
+endif
+// If you're above 34 peace it enables the buff
+if not @timerexists Peace and skill 'Peacemaking' > 34
+  @createtimer Peace
+  @settimer Peace 333333
+endif
+// If you're above 34 provoc it enables the buff
+if not @timerexists Provo and skill 'Provocation' > 34
+  @createtimer Provo
+  @settimer Provo 333333
+endif
+// Buffing has a cooldown of like 11 seconds.
+if @timer BuffPause > 11111
+  // Won't reapply disco unless it's been more than 270s/4.5min
+  if @timer Disco > 270000
+    useskill 'Discordance'
+    waitfortarget 5000
+    target! BuffIt
+    @createtimer Disco
+    @createtimer BuffPause
+    // Won't reapply Peace unless it's been more than 270s/4.5min
+  elseif @timer Peace > 270000
+    useskill 'Peacemaking'
+    waitfortarget 5000
+    target! BuffIt
+    @createtimer Peace
+    @createtimer BuffPause
+  elseif @timer Provo > 270000
+    useskill 'Provocation'
+    waitfortarget 5000
+    target! BuffIt
+    @createtimer Provo
+    @createtimer BuffPause
+  else
+    headmsg "Buffs still active" 38
+    @timermsg Disco 38
+    @timermsg Peace 38
+    @timermsg Provo 38
+  endif
+else
+  headmsg "Buff on cooldown, try again soon" 38
+  @timermsg BuffPause 38
+endif
+
