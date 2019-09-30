@@ -1,5 +1,5 @@
 /////////////////////////////////////////////
-//      Sir Sodomizer's AutoJack V 1.1     //
+//      Sir Sodomizer's AutoJack V 1.2     //
 //     Walks in a loop and swings away     //
 //   Notifies and pauses during captchas   //
 // Pauses for saves, grab hatchets and run //
@@ -50,8 +50,8 @@ endif
 while not dead
   // Keeps working as long as world save isn't happening
   while not @injournal "world is saving" system
-    // If LJing was not started, or it took longer than 7 seconds
-    if not timerexists LJing or timer LJing > 7000
+    // If LJing was not started, or it took longer than 4.5 seconds
+    if not timerexists LJing or timer LJing > 4500
       @clearjournal
       // Use Hatchet
       if not @useobject lefthand
@@ -67,7 +67,7 @@ while not dead
           @useobject lefthand
         endif
       endif
-      waitfortarget 1000
+      waitfortarget 1500
       // while Macrocheck then makes a sound and waits 5s
       while @ingump any "Captcha"
         playsound 1095
@@ -113,8 +113,8 @@ while not dead
       headmsg "You're under attack" 38
       pause 10000
     endif
-    if list NearBy > 2
-      settimer LJing 5000
+    if list NearBy > 1
+      settimer LJing 5500
       @clearlist NearBy
       @clearjournal
       // Move starts here

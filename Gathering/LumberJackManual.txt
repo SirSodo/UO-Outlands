@@ -1,5 +1,5 @@
 /////////////////////////////////////////////
-//     Sir Sodomizer's ManualJack V 1.1    //
+//     Sir Sodomizer's ManualJack V 1.2    //
 //    Macro swings as you steer your toon  //
 //   Notifies and pauses during captchas   //
 // Pauses for saves, grab hatchets and run //
@@ -44,7 +44,7 @@ while not dead
   // Keeps working as long as world save isn't happening
   while not @injournal "world is saving" system
     // If LJing was not started, or it took longer than 7 seconds
-    if not timerexists LJing or timer LJing > 7000
+    if not timerexists LJing or timer LJing > 4500
       @clearjournal
       // Use Hatchet
       if not @useobject lefthand
@@ -60,7 +60,7 @@ while not dead
           @useobject lefthand
         endif
       endif
-      waitfortarget 1000
+      waitfortarget 1500
       // while Macrocheck then makes a sound and waits 5s
       while @ingump any "Captcha"
         playsound 1095
@@ -107,10 +107,10 @@ while not dead
       headmsg "You're under attack" 38
       pause 10000
     endif
-    // If it didn't find a tree 3x it alerts you
-    if list NearBy > 2
+    // If it didn't find a tree 2x it alerts you
+    if list NearBy > 1
       headmsg "Move to another tree" 38
-      settimer LJing 4000
+      settimer LJing 3000
       @clearlist NearBy
       @clearjournal
     endif

@@ -1,19 +1,40 @@
 /////////////////////////////////////////////
 //    Sir Sodomizer's Manual Miner V 1.2   //
+//  *** Multiple Pack Animals Edition ***  //
+//   !!!ONLY IRON ORES IN PACK ANIMALS!!!  //
 // Macro mines & moves iron to pack animal //
 //   Notifies and pauses during captchas   //
-//  Grab pickaxes, a pack animal, and run  //
+//  Grab pickaxes, pack animals, and play  //
 /////////////////////////////////////////////
 // Debug
 @clearjournal
 @removetimer Mining
 @removelist NearBy
 @createlist NearBy
-// Check for pack animal, or target new one
-if not distance 'Packy' < 18
-  headmsg "Target Pack Animal" 38
-  promptalias 'Packy'
+// Checks to see if a list of pack animals exist
+if not listexists 'packanimals'
+  // If it doesn't find them it creates new set of pets
+  @createlist 'packanimals'
+  @clearlist 'packanimals'
+  // Loop 5 times, or until escape gets hit
+  for 5
+    headmsg "Select pack animal, or ESC to stop" 38
+    promptalias 'packanimal'
+    // If you selected a pet it gets added to the list
+    if @findobject 'packanimal'
+      pushlist 'packanimals' 'packanimal'
+    else
+      // If you hit escape it bails this for loop
+      break
+    endif
+  endfor
 endif
+// If you mine with the same pack animals all the time add them here
+//@pushlist 'packanimals'
+//@pushlist 'packanimals'
+//@pushlist 'packanimals'
+//@pushlist 'packanimals'
+//@pushlist 'packanimals'
 // Opens backpack if no pickaxes found
 if not @findtype 0xe86 any backpack
   useobject backpack
@@ -88,13 +109,12 @@ while not dead
       // If ore was mined it resets
     elseif @injournal ore system
       @clearjournal
-      timermsg Mining 38
       removetimer Mining
       // If no vein around it tries again 2 more times
     elseif @injournal nearby system
       @clearjournal
       pushlist NearBy 1
-      settimer Mining 4500
+      settimer Mining 500
     endif
     // Damage / Enemy alert, then pause 10s
     @getenemy 'any'
@@ -122,12 +142,14 @@ while not dead
     endif
     // If 128 stones to overloaded and 10 iron ore in pack
     if diffweight < 129 and counttype 0x19b9 0 backpack > 9
-      // If pack animal is near and has fewer than 180 ore
-      if @inrange 'packy' 2 and @counttype 0x19b9 0 'packy' < 241
-        // Move ore to pack animal
-        @movetype 0x19b9 'backpack' 'packy' 0 0 0 0 10
-        pause 1000
-      endif
+      for 0 to packanimals
+        if @inrange packanimals[] 2 and @counttype 0x19b9 0 packanimals[] < 241
+          // Move iron ore to pack animal
+          @movetype 0x19b9 'backpack' packanimals[] 0 0 0 0 10
+          pause 1000
+          break
+        endif
+      endfor
     endif
     // If 4 stones to overloaded stop
     if diffweight < 5
