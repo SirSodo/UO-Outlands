@@ -22,6 +22,9 @@ Does not use a secure since you can throw over 3000 raws into your pack. If you'
 50-120 can be attained unattended if stash is has enough tools/iron. 
 *Updated 2019Sep21, download again if you grabbed it before then
 
+***********GMto120Scribe***********
+GM-120 can be attained unattended if stash has enough pens/cloth/scrolls
+
 ***********Poisoning***********
 Much human intervention required
 The macro isn't smart enough to differentiate between one level of poison keg vs the other, so the keg that is in your pack must be chosen by you. You also need to restock greater cure pots manually. I had originally set this up with bandages but curing sucks on this shard so I kept dying while macroing. 

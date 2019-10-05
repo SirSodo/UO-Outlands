@@ -1,0 +1,59 @@
+: ///////////////////////////////////
+// Sir Sodomizer's GM-120 Scribe //
+// It crafts, recycles and pulls //
+// Pens, cloth, scrolls in stash //
+///////////////////////////////////
+if not @distance stash < 3
+  headmsg "Select leather and sewing kits stash" 38
+  promptalias stash
+endif
+// While below skill level 120
+while skill Inscription < 120
+  // If fewer than 6 cloth in pack move 200
+  if @counttype 0x1766 any backpack < 6
+    if @movetype 0x1766 stash backpack 0 0 0 0 200
+      pause 1000
+    else
+      headmsg "No cloth left in stash" 38
+      stop
+    endif
+  endif
+  // If fewer than 4 blank scrolls in pack move 200
+  if @counttype 0xef3 any backpack < 4
+    if @movetype 0xef3 stash backpack 0 0 0 0 200
+      pause 1000
+    else
+      headmsg "No blank scrolls left in stash" 38
+      stop
+    endif
+  endif
+  // If no scribe's pens in pack move 1
+  if not @findtype 0xfc0 any backpack
+    if @movetype 0xfc0 stash backpack
+      pause 1000
+    else
+      headmsg "No scribe's pens left in stash" 38
+      stop
+    endif
+  endif
+  // Use scribe's pen
+  @usetype 0xfc0 any backpack
+  waitforgump 0x38920abd 5000
+  // Hits Aspect and Enchanted
+  replygump 0x38920abd 101
+  waitforgump 0x38920abd 15000
+  // Hits Magical Wizard's Hat
+  replygump 0x38920abd 200
+  // Waits 0.9 seconds, edit for lag
+  pause 900
+  // Searches for wizard's hat to recycle
+  if @findtype 0x1718 any backpack
+    // Uses scissors
+    usetype 0xf9f any backpack
+    waitfortarget 5000
+    // Targets an item
+    target! found
+  endif
+  pause 1000
+endwhile
+headmsg "Congrats on hitting 120!" 38
