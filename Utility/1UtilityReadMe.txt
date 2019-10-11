@@ -17,3 +17,9 @@ It will ID every item in 'FromBag' and then sort it either to 'SellBag' or 'Keep
 
 ***********OverworldHotkey***********
 Upon pressing the hotkey this will automatically skin corpses, shear sheep, turn wool into yarn, and turn yarn into bolts, and turns bolts into cloth. Pretty simple macro but I find it handy. It also pauses if a macro check comes up when harvesting.
+
+***********RecallPurchaserDumb***********
+Recalls around an entire runebook saying vendor buy. Make an agent called BuyMacro and load it with the items you want, get yourself to just barely overweight, throw regs into a bank/secure container, and make sure your last rune is the bank/courtyard.
+
+***********ResearchMatsDecoder***********
+Will decode an entire container of research materials. 

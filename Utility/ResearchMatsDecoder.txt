@@ -1,0 +1,308 @@
+//////////////////////////////////////////
+// Sir Sodomizer's Research Mat Decoder //
+// Click play, target container & chill //
+//////////////////////////////////////////
+// Has you select a bag that research materials are in
+headmsg "Target the container with Research Materials" 38
+promptalias ResearchBag
+// Opens bag
+@useobject ResearchBag
+pause 1000
+// Continues looping until all research mats are gone
+while @findtype '0x72a4' 'any' 'ResearchBag'
+  // Moves material to your backpack
+  if @moveitem found backpack
+    pause 750
+  endif
+  @clearjournal
+  // Will try to solve until it sees in journal
+  while not dead
+    @useobject found
+    waitforgump 0x2a496f8c 5000
+    //5,0,0
+    for 5
+      replygump 0x2a496f8c 2
+      waitforgump 0x2a496f8c 5000
+    endfor
+    replygump 0x2a496f8c 5
+    pause 250
+    if @injournal 'You complete your research' system
+      break
+    endif
+    //0,5,0
+    for 5
+      replygump 0x2a496f8c 3
+      waitforgump 0x2a496f8c 5000
+    endfor
+    replygump 0x2a496f8c 5
+    pause 250
+    if @injournal 'You complete your research' system
+      break
+    endif
+    //0,0,5
+    for 5
+      replygump 0x2a496f8c 4
+      waitforgump 0x2a496f8c 5000
+    endfor
+    replygump 0x2a496f8c 5
+    pause 250
+    if @injournal 'You complete your research' system
+      break
+    endif
+    //4,1,0
+    for 4
+      replygump 0x2a496f8c 2
+      waitforgump 0x2a496f8c 5000
+    endfor
+    replygump 0x2a496f8c 3
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 5
+    pause 250
+    if @injournal 'You complete your research' system
+      break
+    endif
+    //4,0,1
+    for 4
+      replygump 0x2a496f8c 2
+      waitforgump 0x2a496f8c 5000
+    endfor
+    replygump 0x2a496f8c 4
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 5
+    pause 250
+    if @injournal 'You complete your research' system
+      break
+    endif
+    //1,4,0
+    for 4
+      replygump 0x2a496f8c 3
+      waitforgump 0x2a496f8c 5000
+    endfor
+    replygump 0x2a496f8c 2
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 5
+    pause 250
+    if @injournal 'You complete your research' system
+      break
+    endif
+    //0,4,1
+    for 4
+      replygump 0x2a496f8c 3
+      waitforgump 0x2a496f8c 5000
+    endfor
+    replygump 0x2a496f8c 4
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 5
+    pause 250
+    if @injournal 'You complete your research' system
+      break
+    endif
+    //1,0,4
+    for 4
+      replygump 0x2a496f8c 4
+      waitforgump 0x2a496f8c 5000
+    endfor
+    replygump 0x2a496f8c 2
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 5
+    pause 250
+    if @injournal 'You complete your research' system
+      break
+    endif
+    //0,1,4
+    for 4
+      replygump 0x2a496f8c 4
+      waitforgump 0x2a496f8c 5000
+    endfor
+    replygump 0x2a496f8c 3
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 5
+    pause 250
+    if @injournal 'You complete your research' system
+      break
+    endif
+    //3,2,0
+    for 3
+      replygump 0x2a496f8c 2
+      waitforgump 0x2a496f8c 5000
+    endfor
+    replygump 0x2a496f8c 3
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 3
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 5
+    pause 250
+    if @injournal 'You complete your research' system
+      break
+    endif
+    //3,1,1
+    for 3
+      replygump 0x2a496f8c 2
+      waitforgump 0x2a496f8c 5000
+    endfor
+    replygump 0x2a496f8c 3
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 4
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 5
+    pause 250
+    if @injournal 'You complete your research' system
+      break
+    endif
+    //3,0,2
+    for 3
+      replygump 0x2a496f8c 2
+      waitforgump 0x2a496f8c 5000
+    endfor
+    replygump 0x2a496f8c 4
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 4
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 5
+    pause 250
+    if @injournal 'You complete your research' system
+      break
+    endif
+    //2,3,0
+    replygump 0x2a496f8c 2
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 2
+    waitforgump 0x2a496f8c 5000
+    for 3
+      replygump 0x2a496f8c 3
+      waitforgump 0x2a496f8c 5000
+    endfor
+    replygump 0x2a496f8c 5
+    pause 250
+    if @injournal 'You complete your research' system
+      break
+    endif
+    //1,3,1
+    replygump 0x2a496f8c 2
+    waitforgump 0x2a496f8c 5000
+    for 3
+      replygump 0x2a496f8c 3
+      waitforgump 0x2a496f8c 5000
+    endfor
+    replygump 0x2a496f8c 4
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 5
+    pause 250
+    if @injournal 'You complete your research' system
+      break
+    endif
+    //0,3,2
+    for 3
+      replygump 0x2a496f8c 3
+      waitforgump 0x2a496f8c 5000
+    endfor
+    replygump 0x2a496f8c 4
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 4
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 5
+    pause 250
+    if @injournal 'You complete your research' system
+      break
+    endif
+    //2,0,3
+    replygump 0x2a496f8c 2
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 2
+    waitforgump 0x2a496f8c 5000
+    for 3
+      replygump 0x2a496f8c 4
+      waitforgump 0x2a496f8c 5000
+    endfor
+    replygump 0x2a496f8c 5
+    pause 250
+    if @injournal 'You complete your research' system
+      break
+    endif
+    //1,1,3
+    replygump 0x2a496f8c 2
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 3
+    waitforgump 0x2a496f8c 5000
+    for 3
+      replygump 0x2a496f8c 4
+      waitforgump 0x2a496f8c 5000
+    endfor
+    replygump 0x2a496f8c 5
+    pause 250
+    if @injournal 'You complete your research' system
+      break
+    endif
+    //0,2,3
+    replygump 0x2a496f8c 3
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 3
+    waitforgump 0x2a496f8c 5000
+    for 3
+      replygump 0x2a496f8c 4
+      waitforgump 0x2a496f8c 5000
+    endfor
+    replygump 0x2a496f8c 5
+    pause 250
+    if @injournal 'You complete your research' system
+      break
+    endif
+    //2,2,1
+    replygump 0x2a496f8c 2
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 2
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 3
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 3
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 4
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 5
+    pause 250
+    if @injournal 'You complete your research' system
+      break
+    endif
+    //2,1,2
+    replygump 0x2a496f8c 2
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 2
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 3
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 4
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 4
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 5
+    pause 250
+    if @injournal 'You complete your research' system
+      break
+    endif
+    //1,2,2
+    replygump 0x2a496f8c 2
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 3
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 3
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 4
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 4
+    waitforgump 0x2a496f8c 5000
+    replygump 0x2a496f8c 5
+    pause 250
+    headmsg "Bad RNG, huh?" 38
+    break
+  endwhile
+  playsound 1050
+  headmsg "Successfully Decoded" 38
+  @findtype 0x6bdc any backpack
+  @moveitem found 'ResearchBag'
+  @ignoreobject found
+  @unsetalias found
+  pause 750
+endwhile
+headmsg "No more Research Materials remaining" 38
+playsound 1054
+

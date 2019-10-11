@@ -1,0 +1,80 @@
+///////////////////////////////////////////////
+// Sir Sodomizer's Recalling Purchaser V 1.0 //
+//   **DUMB VERSION! NO EDITING REQUIRED**   //
+// Home/Bank rune should be last one in book //
+// Create Organizer RecallRegs to move regs  //
+//  from bag in bank to backpack to recall   //
+// Create Organizer MovePaid to move bought  //
+//  items from backpack to that bag in bank  //
+//   Check Complete and Stack in Organizer   //
+//  Create Vendor-Buy BuyMacro click Insert  //
+// add item you wish to purchase, Amount 999 //
+// If you are buying scroll you need to edit //
+// your profile.xml, change graphic to 0xe34 //
+// Get overweight 394/390stone & start macro //
+// Use kegs to get close, then non-valuables //
+// Turn scavenger off so you don't get heavy //
+//  Items should go into bank upon purchase  //
+///////////////////////////////////////////////
+// Sets the runebook you will be using for macro
+if not @findobject MacroRuneBook any backpack
+  headmsg "Please target the runebook you wish to use" 38
+  promptalias MacroRuneBook
+endif
+// Makes the list the first time macro is run
+if not @listexists RuneBookButton
+  @createlist RuneBookButton
+endif
+// If the list is empty it repopulates it
+if list RuneBookButton == 0
+  @pushlist RuneBookButton 5
+  @pushlist RuneBookButton 11
+  @pushlist RuneBookButton 17
+  @pushlist RuneBookButton 23
+  @pushlist RuneBookButton 29
+  @pushlist RuneBookButton 35
+  @pushlist RuneBookButton 41
+  @pushlist RuneBookButton 47
+  @pushlist RuneBookButton 53
+  @pushlist RuneBookButton 59
+  @pushlist RuneBookButton 65
+  @pushlist RuneBookButton 71
+  @pushlist RuneBookButton 77
+  @pushlist RuneBookButton 83
+  @pushlist RuneBookButton 89
+  @pushlist RuneBookButton 95
+endif
+//Main Macro Loop Starts
+for 0 to RuneBookButton
+  while mana < 11
+    headmsg "Not enogh mana, waiting for regen" 38
+    pause 5000
+  endwhile
+  @useobject MacroRuneBook
+  waitforgump 0x5c7db029 5000
+  replygump 0x5c7db029 RuneBookButton[0]
+  // Pause is 2500 for recall and 5000 incase of saves, so 7500
+  pause 7500
+  // Turns on Vendor Agent - BuyMacro
+  buy BuyMacro
+  msg "vendor buy"
+  pause 1000
+  @poplist RuneBookButton front
+endfor
+headmsg "Buying done, bank time" 38
+msg bank
+pause 5000
+organizer MovePaid
+while organizing
+endwhile
+organizer RecallRegs
+while organizing
+endwhile
+// 25 loops of 1 minute to hang out while at bank
+for 25
+  headmsg "Waiting to start again" 38
+  pause 60000
+endfor
+headmsg "Macro restarting" 38
+replay
+
