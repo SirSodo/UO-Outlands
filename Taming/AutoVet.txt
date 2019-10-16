@@ -2,7 +2,7 @@
 //  Sir Sodomizer's Auto Vet 3.3  //
 // If buggy turn off other sysmsg //
 // like damage&skill gain chances //
-// Add permanent pet near line 32 //
+// Add permanent pet near line 19 //
 ////////////////////////////////////
 // Bandage check
 if @counttype '0xe21' 'any' 'backpack' < 20
