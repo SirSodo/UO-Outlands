@@ -1,5 +1,5 @@
 ////////////////////////////////////
-//  Sir Sodomizer's Auto Vet 3.2  //
+//  Sir Sodomizer's Auto Vet 3.3  //
 // If buggy turn off other sysmsg //
 // like damage&skill gain chances //
 // Add permanent pet near line 32 //
@@ -15,6 +15,15 @@ if not listexists 'pets'
   // If it doesn't find them it creates new set of pets
   @createlist 'pets'
   @clearlist 'pets'
+  // ADD FOREVER PETS BELOW
+  @pushlist 'pets' 0x287e0 // Tanky the scarab
+  @pushlist 'pets' 0x1ceab // Dragy the dragon
+  // @pushlist 'pets'
+  // @pushlist 'pets'
+  // @pushlist 'pets'
+  // @pushlist 'pets'
+  // @pushlist 'pets'
+  // ADD FOREVER PETS ABOVE
   // Loop 5 times, or until escape gets hit
   for 5
     headmsg "Select pet, or ESC to stop" 38
@@ -28,15 +37,7 @@ if not listexists 'pets'
     endif
   endfor
 endif
-// ADD FOREVER PETS BELOW
-@pushlist 'pets' 0x287e0 // Tanky the scarab
-@pushlist 'pets' 0x1ceab // Dragy the dragon
-// @pushlist 'pets'
-// @pushlist 'pets'
-// @pushlist 'pets'
-// @pushlist 'pets'
-// @pushlist 'pets'
-// ADD FOREVER PETS ABOVE
+
 @createlist 'HealIt'
 @clearlist 'HealIt'
 // Checks
