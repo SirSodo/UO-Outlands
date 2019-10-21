@@ -15,8 +15,8 @@ endif
 @pushlist recycle 0x1eba // Repair Kits
 // While below skill level 120
 while skill Carpentry < 120
-  // If fewer than 5 boards in pack move 200
-  if @counttype 0x1bd7 any backpack < 5
+  // If fewer than 10 boards in pack move 200
+  if @counttype 0x1bd7 any backpack < 10
     if @movetype 0x1bd7 stash backpack 0 0 0 0 200
       pause 1000
     else
@@ -45,7 +45,7 @@ while skill Carpentry < 120
   endwhile
   for 0 to recycle
     // Count number of items to recycle
-    if @counttype 'recycle[]' any backpack > 4
+    if @counttype 'recycle[]' any backpack > 2
       // Find specific item to recycle
       @findtype 'recycle[]' any backpack
       // Hit recycle button
