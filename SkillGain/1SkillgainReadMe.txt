@@ -4,7 +4,10 @@ IF YOU AREN'T SCROLLED TO 120 YOU NEED TO EDIT THE MACROS! A portion near the to
 
 You can set a secure in your bank, but you would have to have your bank open the entire time the macro is running.
 
-***********50to120Tailor***********
+***********50to120BlackSmith***********
+50-120 can be attained unattended if stash is has enough tongs/ingots. 
+
+***********50to120Carpentry***********
 50-120 can be attained unattended if stash is has enough saws/boards. 
 
 ***********50to120Cartog***********

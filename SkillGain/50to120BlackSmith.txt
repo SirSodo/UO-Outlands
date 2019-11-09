@@ -1,0 +1,120 @@
+///////////////////////////////////
+// Sir Sodomizer's 50-120 BSmith //
+// It crafts, recycles and pulls //
+// Put TONGS and ingots in stash //
+///////////////////////////////////
+if not @distance stash < 3
+  headmsg "Select Ingots and tongs stash" 38
+  promptalias stash
+endif
+@createlist recycle
+@clearlist recycle
+@pushlist recycle 0x140b // Ringmail Helms
+@pushlist recycle 0x13c7 // Chainmail Gorgets
+@pushlist recycle 0x13f2 // Chainmail Gloves
+@pushlist recycle 0x13c0 // Chainmail Coifs
+@pushlist recycle 0x1413 // Platemail Gorgets
+@pushlist recycle 0x1418 // Platemail Gloves
+@pushlist recycle 0x1412 // Platemail Helms
+@pushlist recycle 0x1417 // Platemail Arms
+@pushlist recycle 0x141a // Platemail Legs
+@pushlist recycle 0x1eba // Repair Kits
+// While below skill level 120
+while skill Blacksmithy < 120
+  // If fewer than 14 Ingots in pack move 200
+  if @counttype 0x1bf2 any backpack < 14
+    if @movetype 0x1bf2 stash backpack 0 0 0 0 200
+      pause 1000
+    else
+      headmsg "No ingots left in stash" 38
+      stop
+    endif
+  endif
+  // If no tongs in pack move 1
+  if not @findtype 0xfbb any backpack
+    if @movetype 0xfbb stash backpack
+      pause 1000
+    else
+      headmsg "No tongs left in stash" 38
+      stop
+    endif
+  endif
+  // Use tongs
+  @usetype 0xfbb any backpack
+  waitforgump 0x38920abd 15000
+  // Checks if Recycle all is on
+  while not @ingump 0x38920abd "Recycle All (of Type)"
+    // Hits recycle button until recycle all shows up
+    replygump 0x38920abd 2
+    waitforgump 0x38920abd 15000
+    pause 500
+  endwhile
+  for 0 to recycle
+    // Count number of items to recycle
+    if @counttype 'recycle[]' any backpack > 4
+      // Find specific item to recycle
+      @findtype 'recycle[]' any backpack
+      // Hit recycle button
+      replygump 0x38920abd 3
+      waitfortarget 15000
+      target! found
+      // Use tongs
+      @usetype 0xfbb any backpack
+      waitforgump 0x38920abd 15000
+    endif
+  endfor
+  if skill Blacksmithy < 55
+    // Make Ringmail Helms
+    replygump 0x38920abd 100
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 202
+  elseif skill Blacksmithy < 65
+    // Make Chainmail Gorgets
+    replygump 0x38920abd 101
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 200
+  elseif skill Blacksmithy < 70
+    // Make Chainmail Gloves
+    replygump 0x38920abd 101
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 201
+  elseif skill Blacksmithy < 75
+    // Make Chainmail Coifs
+    replygump 0x38920abd 101
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 202
+  elseif skill Blacksmithy < 85
+    // Make Plate Gorget
+    replygump 0x38920abd 102
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 200
+  elseif skill Blacksmithy < 90
+    // Make Plate Gloves
+    replygump 0x38920abd 102
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 201
+  elseif skill Blacksmithy < 95
+    // Make Plate Helm
+    replygump 0x38920abd 102
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 202
+  elseif skill Blacksmithy < 100
+    // Make Plate Arms
+    replygump 0x38920abd 102
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 203
+  elseif skill Blacksmithy < 105
+    // Make Platemail Legs
+    replygump 0x38920abd 102
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 204
+  elseif skill Blacksmithy < 120
+    // Make repair kits
+    replygump 0x38920abd 109
+    waitforgump 0x38920abd 15000
+    replygump 0x38920abd 200
+  endif
+  pause 1900
+endwhile
+headmsg "Congrats on hitting 120!" 38
+
