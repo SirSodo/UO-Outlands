@@ -101,7 +101,7 @@ while skill "Animal Taming" < 120 and not dead
         // Changes to '3' aka 2nd since we have herding
         waitforcontext 'TankPet' 2 15000
       endif
-      waitfortarget 5000
+      waitfortarget 15000
       target! 'TameMe'
       attack 'TameMe'
       // Ignores and unsets so you don't attempt to tame again
@@ -122,6 +122,7 @@ while skill "Animal Taming" < 120 and not dead
         // Changes to '3' aka 2nd since we have herding
         waitforcontext 'TankPet' 2 15000
       endif
+      waitfortarget 15000
       target! 'TameMe'
       attack 'TameMe'
       ignoreobject 'TameMe'
@@ -242,7 +243,7 @@ while skill "Animal Taming" < 120 and not dead
           waitforcontext 'TankPet' 5 15000
         endif
         useskill 'Animal Taming'
-        waitfortarget 5000
+        waitfortarget 15000
         target! 'TameMe'
         @clearjournal
         createtimer "Taming"
@@ -299,3 +300,4 @@ while skill "Animal Taming" < 120 and not dead
 endwhile
 headmsg "You are dead, sorry" 38
 logoutbutton
+
