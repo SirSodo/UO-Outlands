@@ -4,7 +4,7 @@
 // Pens, cloth, scrolls in stash //
 ///////////////////////////////////
 if not @distance stash < 3
-  headmsg "Select leather and sewing kits stash" 38
+  headmsg "Select cloth, scrolls, and scribe pens stash" 38
   promptalias stash
 endif
 // While below skill level 120
@@ -49,7 +49,10 @@ while skill Inscription < 120
   // Searches for wizard's hat to recycle
   if @findtype 0x1718 any backpack
     // Uses scissors
-    usetype 0xf9f any backpack
+    if not @usetype 0xf9f any backpack
+    headmsg "No scissors in pack" 38
+    stop
+    endif
     waitfortarget 5000
     // Targets an item
     target! found
